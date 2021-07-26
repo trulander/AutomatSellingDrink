@@ -1,6 +1,6 @@
 using System;
 
-namespace AutomatSellingDrink.API
+namespace AutomatSellingDrink.API.Contracts
 {
     public class WeatherForecast
     {
