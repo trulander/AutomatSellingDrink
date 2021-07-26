@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutomatSellingDrink.Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutomatSellingDrink.DataAccess
 {
@@ -18,5 +19,10 @@ namespace AutomatSellingDrink.DataAccess
 
             base.OnModelCreating(modelBuilder);
         }
+        
+        public DbSet<Entities.Coin> Coins { get; set; }
+        public DbSet<Entities.Drink> Drinks { get; set; }
+        public DbSet<Entities.User> Users { get; set; }
+        public DbSet<Entities.File> Files { get; set; }
     }
 }

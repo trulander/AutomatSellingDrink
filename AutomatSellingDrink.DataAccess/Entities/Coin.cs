@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public int Cost { get; set; }
-        public int Owner { get; set; }
-        
+        public User Owner { get; set; }
+        public int UserId { get; set; }
     }
 }

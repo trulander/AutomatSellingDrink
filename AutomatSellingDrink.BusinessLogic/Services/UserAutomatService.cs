@@ -4,9 +4,15 @@ namespace AutomatSellingDrink.BusinessLogic.Services
 {
     public class UserAutomatService : IUserAutomatService
     {
+        private readonly IUserAutomatRepository _userAutomatRepository;
+
+        public UserAutomatService(IUserAutomatRepository userAutomatRepository)
+        {
+            _userAutomatRepository = userAutomatRepository;
+        }
         public void DepositCoins()
         {
-            
+            _userAutomatRepository.DepositCoins();
         }
 
 

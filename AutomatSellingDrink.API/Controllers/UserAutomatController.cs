@@ -20,7 +20,7 @@ namespace AutomatSellingDrink.API.Controllers
         [HttpPost("depositcoins")]
         public void DepositCoins()
         {
-            
+            _userAutomatService.DepositCoins();
         }
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]

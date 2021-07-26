@@ -9,6 +9,13 @@ namespace AutomatSellingDrink.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Coin> builder)
         {
             builder.HasKey(x => x.Id);
+
+            //builder.ToTable("Users");
+
+            builder.HasOne(x => x.Owner)
+                .WithMany(x => x.Coins)
+                .HasForeignKey(x=>x.UserId)
+                .HasPrincipalKey(x=>x.Id);
         }
     }
 }

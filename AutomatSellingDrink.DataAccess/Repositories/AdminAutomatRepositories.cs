@@ -1,10 +1,16 @@
-﻿using AutomatSellingDrink.Core.Interfaces;
+﻿using System;
+using AutomatSellingDrink.Core.Interfaces;
 
 namespace AutomatSellingDrink.DataAccess.Repositories
 {
     public class AdminAutomatRepositories : IAdminAutomatRepositories
     {
+        private readonly ApplicationDbContext _applicationDbContext;
 
+        public AdminAutomatRepositories(ApplicationDbContext applicationDbContext)
+        {
+            _applicationDbContext = applicationDbContext;
+        }
         public void CreateDrink()
         {
             
