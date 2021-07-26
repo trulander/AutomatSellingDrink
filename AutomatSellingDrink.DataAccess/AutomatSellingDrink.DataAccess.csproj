@@ -5,10 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Repositories" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\AutomatSellingDrink.Core\AutomatSellingDrink.Core.csproj" />
     </ItemGroup>
 

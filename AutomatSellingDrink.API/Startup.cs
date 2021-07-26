@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutomatSellingDrink.BusinessLogic.Services;
+using AutomatSellingDrink.Core.Interfaces;
 using AutomatSellingDrink.DataAccess;
+using AutomatSellingDrink.DataAccess.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -39,6 +42,12 @@ namespace AutomatSellingDrink.API
                 conf.AddProfile<ApiMappingProfile>();
                 conf.AddProfile<DataAccessMappingProfile>();
             });
+
+            services.AddScoped<IAdminAutomatRepositories, AdminAutomatRepositories>();
+            services.AddScoped<IAdminAutomatService, AdminAutomatService>();
+            
+            services.AddScoped<IUserAutomatRepository, UserAutomatRepository>();
+            services.AddScoped<IUserAutomatService, UserAutomatService>();
             
             services.AddControllers();
             services.AddSwaggerGen(c =>

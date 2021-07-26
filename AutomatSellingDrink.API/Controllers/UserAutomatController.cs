@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using AutomatSellingDrink.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutomatSellingDrink.API.Controllers
@@ -7,6 +8,13 @@ namespace AutomatSellingDrink.API.Controllers
     [Route("[controller]")]
     public class UserAutomatController: ControllerBase
     {
+        private readonly IUserAutomatService _userAutomatService;
+
+        public UserAutomatController(IUserAutomatService userAutomatService)
+        {
+            _userAutomatService = userAutomatService;
+        }
+        
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
         [HttpPost("depositcoins")]
