@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutomatSellingDrink.DataAccess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,10 +28,18 @@ namespace AutomatSellingDrink.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(conf =>
+            {
+                conf.AddProfile<ApiMappingProfile>();
+                conf.AddProfile<DataAccessMappingProfile>();
+            });
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "AutomatSellingDrink.API", Version = "v1"});
+                var filePath = Path.Combine(System.AppContext.BaseDirectory, "AutomatSellingDrink.API.xml");
+                c.IncludeXmlComments(filePath);
             });
         }
 

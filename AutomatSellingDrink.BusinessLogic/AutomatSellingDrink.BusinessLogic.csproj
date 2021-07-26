@@ -8,4 +8,8 @@
       <Folder Include="Services" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AutomatSellingDrink.Core\AutomatSellingDrink.Core.csproj" />
+    </ItemGroup>
+
 </Project>

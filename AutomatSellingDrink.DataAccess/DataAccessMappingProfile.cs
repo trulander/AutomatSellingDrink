@@ -1,6 +1,8 @@
-﻿namespace AutomatSellingDrink.DataAccess
+﻿using AutoMapper;
+
+namespace AutomatSellingDrink.DataAccess
 {
-    public class DataAccessMappingProfile
+    public class DataAccessMappingProfile: Profile
     {
         
     }
