@@ -34,7 +34,16 @@ namespace AutomatSellingDrink.API
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlite(
+                    Configuration.GetConnectionString("DefaultConnection"), b =>
+                    {
+                        b.MigrationsAssembly("AutomatSellingDrink.API");
+                    });
+                // options.UseSqlServer(
+                //     Configuration.GetConnectionString("DefaultConnection"), b=>
+                // {
+                //     b.MigrationsAssembly("AutomatSellingDrink.API");
+                // });
             });
             
             services.AddAutoMapper(conf =>
