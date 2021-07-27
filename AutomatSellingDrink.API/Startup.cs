@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutomatSellingDrink.API.Middlewares;
 using AutomatSellingDrink.BusinessLogic.Services;
 using AutomatSellingDrink.Core.Interfaces;
 using AutomatSellingDrink.DataAccess;
 using AutomatSellingDrink.DataAccess.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Session;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +35,13 @@ namespace AutomatSellingDrink.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = "AutomatSellingDrink.Session";
+            });
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlite(
@@ -52,6 +62,9 @@ namespace AutomatSellingDrink.API
                 conf.AddProfile<DataAccessMappingProfile>();
             });
 
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
+            
             services.AddScoped<IAdminAutomatRepositories, AdminAutomatRepositories>();
             services.AddScoped<IAdminAutomatService, AdminAutomatService>();
             
@@ -70,18 +83,21 @@ namespace AutomatSellingDrink.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSession();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AutomatSellingDrink.API v1"));
             }
-
+            
+            
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseMiddleware<AutenticationUserMidleware>();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

@@ -1,10 +1,8 @@
 ﻿namespace AutomatSellingDrink.Core.Models
 {
-    public class Coin
+    public class DepositCoin
     {
         public int Id { get; set; }
         public int Cost { get; set; }
-        public User Owner { get; set; }
-        public int UserId { get; set; }
     }
 }

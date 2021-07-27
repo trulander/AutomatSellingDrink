@@ -1,4 +1,6 @@
-﻿using AutomatSellingDrink.Core.Interfaces;
+﻿using System.Threading.Tasks;
+using AutomatSellingDrink.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace AutomatSellingDrink.BusinessLogic.Services
 {
@@ -6,32 +8,43 @@ namespace AutomatSellingDrink.BusinessLogic.Services
     {
         private readonly IUserAutomatRepository _userAutomatRepository;
 
+
         public UserAutomatService(IUserAutomatRepository userAutomatRepository)
         {
             _userAutomatRepository = userAutomatRepository;
         }
-        public void DepositCoins()
+        public async Task DepositCoin(Core.Models.Coin coin)
         {
-            _userAutomatRepository.DepositCoins();
+            await _userAutomatRepository.DepositCoin(coin);
         }
 
 
-        public void GetChange()
+        public async Task<Core.Models.Coin[]> GetChange(Core.Models.User user)
         {
+            return await _userAutomatRepository.GetChange(user);
+        }
+
+        public  async Task<Core.Models.Coin[]> GetAvailableDepositCoins()
+        {
+            return await _userAutomatRepository.GetAvailableDepositCoins();
+        }
+
+        public async Task BuyDrink(Core.Models.Drink drink, Core.Models.User user)
+        {
+            int summ = 0;
+            foreach (var coin in user.Coins)
+            {
+                summ += coin.Cost;
+            }
             
+            if (drink.Cost <= summ)
+            {
+                
+            }
+            await _userAutomatRepository.BuyDrink();
         }
 
-        public void GetAvailableDepositCoins()
-        {
-            
-        }
-
-        public void BuyDrink()
-        {
-            
-        }
-
-        public void GetAvailableDrinks()
+        public async Task GetAvailableDrinks()
         {
             
         }

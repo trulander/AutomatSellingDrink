@@ -25,5 +25,6 @@ namespace AutomatSellingDrink.DataAccess
         public DbSet<Entities.Drink> Drinks { get; set; }
         public DbSet<Entities.User> Users { get; set; }
         public DbSet<Entities.File> Files { get; set; }
+        public DbSet<Entities.DepositCoin> AvailableDepositCoins {get;set;}
     }
 }

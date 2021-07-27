@@ -1,11 +1,14 @@
-﻿namespace AutomatSellingDrink.Core.Interfaces
+﻿using System.Threading.Tasks;
+using AutomatSellingDrink.Core.Models;
+
+namespace AutomatSellingDrink.Core.Interfaces
 {
     public interface IUserAutomatService
     {
-        void DepositCoins();
-        void GetChange();
-        void GetAvailableDepositCoins();
-        void BuyDrink();
-        void GetAvailableDrinks();
+        Task DepositCoin(Coin coins);
+        Task<Coin[]> GetChange(Core.Models.User user);
+        Task<Coin[]> GetAvailableDepositCoins();
+        Task BuyDrink(Core.Models.Drink drink, Core.Models.User user);
+        Task GetAvailableDrinks();
     }
 }

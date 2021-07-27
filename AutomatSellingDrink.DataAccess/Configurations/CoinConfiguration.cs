@@ -10,8 +10,6 @@ namespace AutomatSellingDrink.DataAccess.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            //builder.ToTable("Users");
-
             builder.HasOne(x => x.Owner)
                 .WithMany(x => x.Coins)
                 .HasForeignKey(x=>x.UserId)
