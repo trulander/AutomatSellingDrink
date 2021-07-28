@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using AutomatSellingDrink.Core.Interfaces;
 using Microsoft.AspNetCore.Hosting;
@@ -22,12 +23,20 @@ namespace AutomatSellingDrink.API.Controllers
         [HttpPost("uploadfile")]
         public async Task<IActionResult> UploadFileAsync(IFormFile uploadedFile)
         {
+            Core.Models.File result = null;
             if (uploadedFile != null)
             {
-                await _fileService.UploadFileAsync(uploadedFile);
+                try
+                {
+                    result = await _fileService.UploadFileAsync(uploadedFile);
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.Message);
+                }
             }
 
-            return Ok();
+            return Ok(result);
 
         }
     }

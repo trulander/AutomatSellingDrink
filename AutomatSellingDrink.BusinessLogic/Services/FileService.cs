@@ -7,6 +7,7 @@ using AutomatSellingDrink.DataAccess;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using File = AutomatSellingDrink.Core.Models.File;
 
 namespace AutomatSellingDrink.BusinessLogic.Services
 {
@@ -38,19 +39,22 @@ namespace AutomatSellingDrink.BusinessLogic.Services
                 dirInfo.Create();
             }
        }
-        public async Task UploadFileAsync(IFormFile uploadedFile)
+        public async Task<File> UploadFileAsync(IFormFile uploadedFile)
         {
             string path = _path + uploadedFile.FileName;
+            
             using (var fileStream = new FileStream(path, FileMode.Create))
             {
                 await uploadedFile.CopyToAsync(fileStream);
             }
-
-            await _fileRepository.UploadFileAsync(new Core.Models.File()
+            
+            var result = await _fileRepository.UploadFileAsync(new Core.Models.File()
             {
                 Name = uploadedFile.FileName,
                 Path = path
             });
+            
+            return result;
         }
     }
 }

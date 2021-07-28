@@ -11,10 +11,7 @@ namespace AutomatSellingDrink.DataAccess.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            builder.HasOne(x => x.Image)
-                .WithOne(x => x.Drink)
-                .HasForeignKey<Drink>(x => x.FileId)
-                .HasPrincipalKey<File>(x => x.Id);
+            builder.HasOne(x => x.Image);
         }
     }
 }
