@@ -1,4 +1,5 @@
-﻿using AutomatSellingDrink.Core.Interfaces;
+﻿using System.Threading.Tasks;
+using AutomatSellingDrink.Core.Interfaces;
 
 namespace AutomatSellingDrink.DataAccess.Repositories
 {
@@ -10,9 +11,15 @@ namespace AutomatSellingDrink.DataAccess.Repositories
         {
             _applicationDbContext = applicationDbContext;
         }
-        public void UploadFile()
+        public async Task UploadFileAsync(Core.Models.File newFile)
         {
-            
+            Entities.File file = new Entities.File()
+            {
+                Name = newFile.Name,
+                Path = newFile.Path
+            };
+            await _applicationDbContext.Files.AddAsync(file);
+            await _applicationDbContext.SaveChangesAsync(); 
         }
     }
 }

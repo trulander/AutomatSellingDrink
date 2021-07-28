@@ -1,4 +1,7 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
+using AutoMapper;
+using AutomatSellingDrink.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutomatSellingDrink.API.Controllers
@@ -7,12 +10,25 @@ namespace AutomatSellingDrink.API.Controllers
     [Route("[controller]")]
     public class AdminAutomatController: ControllerBase
     {
+        private readonly IAdminAutomatRepository _adminAutomatRepository;
+        private readonly IMapper _mapper;
+
+        public AdminAutomatController(
+            IAdminAutomatRepository adminAutomatRepository,
+            IMapper mapper)
+        {
+            _adminAutomatRepository = adminAutomatRepository;
+            _mapper = mapper;
+        }
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
         [HttpPost("createdrink")]
-        public void CreateDrink()
+        public async Task<IActionResult> CreateDrinkAsync(Contracts.Drink newDrink)
         {
             
+            await _adminAutomatRepository.CreateDrinkAsync(_mapper.Map<Contracts.Drink, Core.Models.Drink>(newDrink));
+
+            return Ok();
         }
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]

@@ -15,10 +15,10 @@ namespace AutomatSellingDrink.DataAccess.Repositories
         private readonly IMapper _mapper;
         private string _path;
 
-        public SettingsRepository(IConfiguration Configuration, IMapper mapper)
+        public SettingsRepository(IConfiguration configuration, IMapper mapper)
         {
             _mapper = mapper;
-            _path = Configuration.GetSection("PathSettings").Value;
+            _path = configuration.GetSection("PathSettings").Value;
             DirectoryInfo dirInfo = new DirectoryInfo(_path);
 
             if (!dirInfo.Exists)

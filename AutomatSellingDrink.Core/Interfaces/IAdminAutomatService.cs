@@ -1,15 +1,17 @@
-﻿namespace AutomatSellingDrink.Core.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace AutomatSellingDrink.Core.Interfaces
 {
     public interface IAdminAutomatService
     {
-        void CreateDrink();
-        void DeleteDrink();
-        void UpdateDrink();
-        void GetDrink();
-        void GetAllDrinks();
-        void UpdateQuantityCoins();
-        void GetQuantityCoins();
-        void UpdateAvailableDepositCoins();
-        void GetAvailableDepositCoins();
+        Task CreateDrink(Core.Models.Drink drink);
+        Task DeleteDrink();
+        Task UpdateDrink();
+        Task GetDrink();
+        Task GetAllDrinks();
+        Task UpdateQuantityCoins();
+        Task GetQuantityCoins();
+        Task UpdateAvailableDepositCoins();
+        Task GetAvailableDepositCoins();
     }
 }

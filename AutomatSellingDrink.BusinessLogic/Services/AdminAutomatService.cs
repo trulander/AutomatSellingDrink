@@ -1,4 +1,5 @@
-﻿using AutomatSellingDrink.Core.Interfaces;
+﻿using System.Threading.Tasks;
+using AutomatSellingDrink.Core.Interfaces;
 
 namespace AutomatSellingDrink.BusinessLogic.Services
 {
@@ -10,47 +11,47 @@ namespace AutomatSellingDrink.BusinessLogic.Services
         {
             _adminAutomatRepository = adminAutomatRepository;
         }
-        public void CreateDrink()
+        public async Task CreateDrink(Core.Models.Drink drink)
+        {
+            _adminAutomatRepository.CreateDrinkAsync(drink);
+        }
+
+        public async Task DeleteDrink()
         {
             
         }
 
-        public void DeleteDrink()
+        public async Task UpdateDrink()
         {
             
         }
 
-        public void UpdateDrink()
+        public async Task GetDrink()
         {
             
         }
 
-        public void GetDrink()
+        public async Task GetAllDrinks()
         {
             
         }
 
-        public void GetAllDrinks()
+        public async Task UpdateQuantityCoins()
         {
             
         }
 
-        public void UpdateQuantityCoins()
+        public async Task GetQuantityCoins()
         {
             
         }
 
-        public void GetQuantityCoins()
+        public async Task UpdateAvailableDepositCoins()
         {
             
         }
 
-        public void UpdateAvailableDepositCoins()
-        {
-            
-        }
-
-        public void GetAvailableDepositCoins()
+        public async Task GetAvailableDepositCoins()
         {
             
         }

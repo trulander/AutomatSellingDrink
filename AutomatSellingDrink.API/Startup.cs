@@ -52,6 +52,9 @@ namespace AutomatSellingDrink.API
                 conf.AddProfile<DataAccessMappingProfile>();
             });
 
+            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IFileRepository, FileRepository>();
+            
             services.AddSingleton<ISettingsRepository, SettingsRepository>();
             services.AddSingleton<ISettingsService, SettingsService>();
             

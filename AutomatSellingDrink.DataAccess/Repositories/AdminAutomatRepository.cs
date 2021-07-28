@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using AutoMapper;
 using AutomatSellingDrink.Core.Interfaces;
 
 namespace AutomatSellingDrink.DataAccess.Repositories
@@ -6,52 +8,57 @@ namespace AutomatSellingDrink.DataAccess.Repositories
     public class AdminAutomatRepository : IAdminAutomatRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IMapper _mapper;
 
-        public AdminAutomatRepository(ApplicationDbContext applicationDbContext)
+        public AdminAutomatRepository(
+            ApplicationDbContext applicationDbContext,
+            IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
+            _mapper = mapper;
         }
-        public void CreateDrink()
+        public async Task CreateDrinkAsync(Core.Models.Drink newDrink)
+        {
+            await _applicationDbContext.Drinks.AddAsync(_mapper.Map<Entities.Drink>(newDrink));
+            await _applicationDbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteDrinkAsync()
         {
             
         }
 
-        public void DeleteDrink()
+        public async Task UpdateDrinkAsync()
         {
             
         }
 
-        public void UpdateDrink()
+        public async Task GetDrinkAsync()
         {
             
         }
 
-        public void GetDrink()
+        public async Task GetAllDrinksAsync()
         {
             
         }
 
-        public void GetAllDrinks()
+        public async Task UpdateQuantityCoinsAsync()
         {
             
         }
 
-        public void UpdateQuantityCoins()
+        public async Task GetQuantityCoinsAsync()
         {
             
         }
 
-        public void GetQuantityCoins()
+        public async Task UpdateAvailableDepositCoinsAsync()
         {
             
         }
 
-        public void UpdateAvailableDepositCoins()
-        {
-            
-        }
-
-        public void GetAvailableDepositCoins()
+        public async Task GetAvailableDepositCoinsAsync()
         {
             
         }

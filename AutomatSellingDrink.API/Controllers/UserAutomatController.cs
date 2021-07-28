@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using AutomatSellingDrink.API.Contracts;
 using AutomatSellingDrink.Core.Interfaces;
+using AutomatSellingDrink.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Coin = AutomatSellingDrink.Core.Models.Coin;
 using IMapper = AutoMapper.IMapper;
@@ -82,25 +82,47 @@ namespace AutomatSellingDrink.API.Controllers
             }
             catch (Exception e)
             {
-                BadRequest(e.Message);
+                return BadRequest(e.Message);
             }
             return Ok(result);
         }
 
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(int), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
         [HttpPost("buyDrink")]
-        public void BuyDrink()
+        public async Task<IActionResult> BuyDrinkAsync(Contracts.Drink drink)
         {
-            
+            int summMoney = 0;
+            try
+            {
+                summMoney = await _userAutomatService.BuyDrinkAsync(_mapper.Map<Contracts.Drink,Core.Models.Drink>(drink));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok(summMoney);
         }
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
         [HttpGet("getavailabledrinks")]
-        public void GetAvailableDrinks()
+        public async Task<IActionResult> GetAvailableDrinksAsync()
         {
-            
+            List<Contracts.Drink> result = null;
+            try
+            {
+                foreach (var drink in await _userAutomatService.GetAvailableDrinks())
+                {
+                    result.Add(_mapper.Map<Core.Models.Drink, Contracts.Drink>(drink));
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(result.ToArray());
         }
         
     }

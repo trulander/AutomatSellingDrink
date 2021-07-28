@@ -41,7 +41,7 @@ namespace AutomatSellingDrink.BusinessLogic.Services
 
         public async Task<Core.Models.Coin[]> GetChangeAsync()
         {
-            var rawCoins = await _userAutomatRepository.GetAvailableCoinsAsync();
+            var rawCoins = await _userAutomatRepository.GetAllCoinsAsync();
             List<Coin> toCgangeCoins = new List<Coin>();
 
             Dictionary<int, int> allCoins = new Dictionary<int, int>();
@@ -90,14 +90,34 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             return await _settingsService.LoadSettingsAsync();
         }
 
-        public async Task BuyDrink()
+        public async Task<int> BuyDrinkAsync(Core.Models.Drink drink)
         {
+            Core.Models.Drink drinkFromDb = await _userAutomatRepository.GetDrinkAsync(drink);
+            if (drinkFromDb == null)
+            {
+                throw new DrinkNotFoundException("Напитка нет в наличии");
+            }
+            if (drinkFromDb.Cost <= _userSummMoney)
+            {
+                _userSummMoney -= drinkFromDb.Cost;
+                await _userAutomatRepository.BuyDrinkAsync(drinkFromDb);
+            }
+            else
+            {
+                throw new NeedMoreMoneyException("Не достаточно денег для покупки выбранного написка");
+            }
             
+            return _userSummMoney;
         }
 
-        public async Task GetAvailableDrinks()
+        public async Task<Core.Models.Drink[]> GetAvailableDrinks()
         {
-            
+            var result = await _userAutomatRepository.GetAvailableDrinksAsync();
+            if (result == null || result.Length == default(int))
+            {
+                throw new DrinkNotFoundException("Ни одного напитка нет в наличии");
+            }
+            return result;
         }
     }
 }

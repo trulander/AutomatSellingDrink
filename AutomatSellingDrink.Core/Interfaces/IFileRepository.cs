@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace AutomatSellingDrink.Core.Interfaces
 {
     public interface IFileRepository
     {
-        void UploadFile();
+        Task UploadFileAsync(Core.Models.File newFile);
     }
 }

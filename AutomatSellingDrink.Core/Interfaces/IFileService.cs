@@ -1,7 +1,10 @@
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+
 namespace AutomatSellingDrink.Core.Interfaces
 {
     public interface IFileService
     {
-        void UploadFile();
+        Task UploadFileAsync(IFormFile uploadedFile);
     }
 }
