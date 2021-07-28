@@ -11,8 +11,6 @@ namespace AutomatSellingDrink.DataAccess.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            //builder.ToTable("Images");
-
             builder.HasOne(x => x.Image)
                 .WithOne(x => x.Drink)
                 .HasForeignKey<Drink>(x => x.FileId)

@@ -1,37 +1,101 @@
-﻿using AutomatSellingDrink.Core.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutomatSellingDrink.Core.Exceptions;
+using AutomatSellingDrink.Core.Interfaces;
+using AutomatSellingDrink.Core.Models;
 
 namespace AutomatSellingDrink.BusinessLogic.Services
 {
     public class UserAutomatService : IUserAutomatService
     {
         private readonly IUserAutomatRepository _userAutomatRepository;
+        private readonly ISettingsService _settingsService;
+        private int _userSummMoney = 0;
 
-        public UserAutomatService(IUserAutomatRepository userAutomatRepository)
+        public UserAutomatService(IUserAutomatRepository userAutomatRepository, ISettingsService settingsService)
         {
             _userAutomatRepository = userAutomatRepository;
+            _settingsService = settingsService;
         }
-        public void DepositCoins()
+        public async Task DepositCoinAsync(Core.Models.Coin coin)
         {
-            _userAutomatRepository.DepositCoins();
+
+            var settings = await _settingsService.LoadSettingsAsync();
+            
+            if ((coin.Cost == 1 && settings.IsAllowUpload1Coin) || 
+                (coin.Cost == 2 && settings.IsAllowUpload2Coin) ||
+                (coin.Cost == 5 && settings.IsAllowUpload5Coin) ||
+                (coin.Cost == 10 && settings.IsAllowUpload10Coin))
+            {
+                await _userAutomatRepository.DepositCoinAsync(coin);
+                _userSummMoney += coin.Cost;
+            }
+            else
+            {
+                throw new NotAllowCoinException("Данная монета не доступна для внесения");
+            }
+            
         }
 
+        public async Task<Core.Models.Coin[]> GetChangeAsync()
+        {
+            var rawCoins = await _userAutomatRepository.GetAvailableCoinsAsync();
+            List<Coin> toCgangeCoins = new List<Coin>();
 
-        public void GetChange()
+            Dictionary<int, int> allCoins = new Dictionary<int, int>();
+            
+            foreach (var coin in rawCoins)
+            {
+                if (allCoins.ContainsKey(coin.Cost))
+                {
+                    allCoins[coin.Cost] += 1;
+                }
+                else
+                {
+                    allCoins.Add(coin.Cost, 1);
+                }
+            }
+            
+            int coveredPrice(int summToChange,int price, int maxNo)
+            {
+                int counted = 0;
+                int Num = summToChange / price;
+                if (maxNo == 0)
+                    return 0;
+                if (maxNo != -1)             //-i is infinit
+                    if (Num > maxNo - counted)
+                        Num = maxNo;
+                for (int i = 0; i < Num; i++)
+                {
+                    toCgangeCoins.Add(new Coin()
+                    {
+                        Cost = price
+                    });
+                }
+                return Num * price;
+            }
+
+            var test = allCoins.Reverse().ToArray();
+            for (int i = 0; i < allCoins.Count; i++)
+            {
+                _userSummMoney -= coveredPrice(_userSummMoney,test[i].Key,test[i].Value);
+            }
+            return await _userAutomatRepository.GetChangeAsync(toCgangeCoins.ToArray());
+        }
+
+        public async Task<Core.Models.Settings> GetAvailableDepositCoins()
+        {
+            return await _settingsService.LoadSettingsAsync();
+        }
+
+        public async Task BuyDrink()
         {
             
         }
 
-        public void GetAvailableDepositCoins()
-        {
-            
-        }
-
-        public void BuyDrink()
-        {
-            
-        }
-
-        public void GetAvailableDrinks()
+        public async Task GetAvailableDrinks()
         {
             
         }

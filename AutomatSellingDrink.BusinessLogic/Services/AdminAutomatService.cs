@@ -4,11 +4,11 @@ namespace AutomatSellingDrink.BusinessLogic.Services
 {
     public class AdminAutomatService : IAdminAutomatService
     {
-        private readonly IAdminAutomatRepositories _adminAutomatRepositories;
+        private readonly IAdminAutomatRepository _adminAutomatRepository;
 
-        public AdminAutomatService(IAdminAutomatRepositories adminAutomatRepositories)
+        public AdminAutomatService(IAdminAutomatRepository adminAutomatRepository)
         {
-            _adminAutomatRepositories = adminAutomatRepositories;
+            _adminAutomatRepository = adminAutomatRepository;
         }
         public void CreateDrink()
         {

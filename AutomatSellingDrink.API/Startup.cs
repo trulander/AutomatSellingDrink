@@ -44,7 +44,7 @@ namespace AutomatSellingDrink.API
                 // {
                 //     b.MigrationsAssembly("AutomatSellingDrink.API");
                 // });
-            });
+            }, ServiceLifetime.Singleton);
             
             services.AddAutoMapper(conf =>
             {
@@ -52,11 +52,14 @@ namespace AutomatSellingDrink.API
                 conf.AddProfile<DataAccessMappingProfile>();
             });
 
-            services.AddScoped<IAdminAutomatRepositories, AdminAutomatRepositories>();
+            services.AddSingleton<ISettingsRepository, SettingsRepository>();
+            services.AddSingleton<ISettingsService, SettingsService>();
+            
+            services.AddScoped<IAdminAutomatRepository, AdminAutomatRepository>();
             services.AddScoped<IAdminAutomatService, AdminAutomatService>();
             
-            services.AddScoped<IUserAutomatRepository, UserAutomatRepository>();
-            services.AddScoped<IUserAutomatService, UserAutomatService>();
+            services.AddSingleton<IUserAutomatRepository, UserAutomatRepository>();
+            services.AddSingleton<IUserAutomatService, UserAutomatService>();
             
             services.AddControllers();
             services.AddSwaggerGen(c =>

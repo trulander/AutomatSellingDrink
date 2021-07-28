@@ -4,11 +4,11 @@ namespace AutomatSellingDrink.BusinessLogic.Services
 {
     public class FileService : IFileService
     {
-        private readonly IFileRepositories _fileRepositories;
+        private readonly IFileRepository _fileRepository;
 
-        public FileService(IFileRepositories fileRepositories)
+        public FileService(IFileRepository fileRepository)
         {
-            _fileRepositories = fileRepositories;
+            _fileRepository = fileRepository;
         }
         public void UploadFile()
         {

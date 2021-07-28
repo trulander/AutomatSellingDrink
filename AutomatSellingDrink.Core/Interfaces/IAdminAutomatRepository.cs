@@ -1,6 +1,6 @@
 ﻿namespace AutomatSellingDrink.Core.Interfaces
 {
-    public interface IAdminAutomatRepositories
+    public interface IAdminAutomatRepository
     {
         void CreateDrink();
         void DeleteDrink();

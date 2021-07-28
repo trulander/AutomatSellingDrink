@@ -1,6 +1,12 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using AutomatSellingDrink.API.Contracts;
 using AutomatSellingDrink.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Coin = AutomatSellingDrink.Core.Models.Coin;
+using IMapper = AutoMapper.IMapper;
 
 namespace AutomatSellingDrink.API.Controllers
 {
@@ -9,34 +15,76 @@ namespace AutomatSellingDrink.API.Controllers
     public class UserAutomatController: ControllerBase
     {
         private readonly IUserAutomatService _userAutomatService;
+        private readonly IMapper _mapper;
 
-        public UserAutomatController(IUserAutomatService userAutomatService)
+        public UserAutomatController(IUserAutomatService userAutomatService, IMapper mapper)
         {
             _userAutomatService = userAutomatService;
+            _mapper = mapper;
         }
         
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
         [HttpPost("depositcoins")]
-        public void DepositCoins()
+        public async Task<IActionResult> DepositCoin(Contracts.Coin coin)
         {
-            _userAutomatService.DepositCoins();
+            Core.Models.Coin result = null;
+            try
+            {
+                result = new Coin()
+                {
+                    Cost = coin.Cost,
+                    IsUserOwner = true
+                    
+                };
+                await _userAutomatService.DepositCoinAsync(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
         }
 
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.Coin[]), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
         [HttpGet("getchange")]
-        public void GetChange()
+        public async Task<IActionResult> GetChangeAsync()
         {
-            
+            List<Contracts.Coin> result = new List<Contracts.Coin>();
+            try
+            {
+                var coins = await _userAutomatService.GetChangeAsync();
+                foreach (var coin in coins) 
+                {
+                    result.Add(_mapper.Map<Core.Models.Coin,Contracts.Coin>(coin));
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(result.ToArray());
         }
 
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.Settings), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
         [HttpGet("getavailabledepositcoins")]
-        public void GetAvailableDepositCoins()
+        public async Task<IActionResult> GetAvailableDepositCoins()
         {
-            
+            Contracts.Settings result = null;
+            try
+            {
+                result = _mapper.Map<Core.Models.Settings, Contracts.Settings>(
+                    await _userAutomatService.GetAvailableDepositCoins());
+            }
+            catch (Exception e)
+            {
+                BadRequest(e.Message);
+            }
+            return Ok(result);
         }
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]

@@ -1,0 +1,1 @@
+{"IsAllowUpload1Coin":true,"IsAllowUpload2Coin":true,"IsAllowUpload5Coin":true,"IsAllowUpload10Coin":true}

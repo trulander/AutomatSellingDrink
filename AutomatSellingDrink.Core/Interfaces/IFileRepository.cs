@@ -1,6 +1,6 @@
 namespace AutomatSellingDrink.Core.Interfaces
 {
-    public interface IFileRepositories
+    public interface IFileRepository
     {
         void UploadFile();
     }

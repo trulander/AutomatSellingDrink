@@ -2,11 +2,11 @@
 
 namespace AutomatSellingDrink.DataAccess.Repositories
 {
-    public class FileRepositories : IFileRepositories
+    public class FileRepository : IFileRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
 
-        public FileRepositories(ApplicationDbContext applicationDbContext)
+        public FileRepository(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }

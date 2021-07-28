@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutomatSellingDrink.API.Contracts;
 
 namespace AutomatSellingDrink.API
 {
@@ -9,7 +10,7 @@ namespace AutomatSellingDrink.API
             CreateMap<Core.Models.Coin, Contracts.Coin>().ReverseMap();
             CreateMap<Core.Models.Drink, Contracts.Drink>().ReverseMap();
             CreateMap<Core.Models.File, Contracts.File>().ReverseMap();
-            CreateMap<Core.Models.User, Contracts.User>().ReverseMap();
+            CreateMap<Core.Models.Settings, Contracts.Settings>().ReverseMap();
         }
     }
 }

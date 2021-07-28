@@ -3,11 +3,11 @@ using AutomatSellingDrink.Core.Interfaces;
 
 namespace AutomatSellingDrink.DataAccess.Repositories
 {
-    public class AdminAutomatRepositories : IAdminAutomatRepositories
+    public class AdminAutomatRepository : IAdminAutomatRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
 
-        public AdminAutomatRepositories(ApplicationDbContext applicationDbContext)
+        public AdminAutomatRepository(ApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
         }

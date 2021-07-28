@@ -16,14 +16,13 @@ namespace AutomatSellingDrink.DataAccess
             modelBuilder.ApplyConfiguration(new Configurations.CoinConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.DrinkConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.FileConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.UserConfiguration());
+
 
             base.OnModelCreating(modelBuilder);
         }
         
         public DbSet<Entities.Coin> Coins { get; set; }
         public DbSet<Entities.Drink> Drinks { get; set; }
-        public DbSet<Entities.User> Users { get; set; }
         public DbSet<Entities.File> Files { get; set; }
     }
 }
