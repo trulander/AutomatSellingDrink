@@ -26,7 +26,7 @@ namespace AutomatSellingDrink.DataAccess.Repositories
         }
 
 
-        public async Task<Core.Models.Coin[]> GetAvailableCoinsAsync()
+        public async Task<Core.Models.Coin[]> GetAllCoinsAsync()
         {
             var coins = await _applicationDbContext.Coins.OrderBy(x => x.Cost).ToArrayAsync();
             List<Core.Models.Coin> result = new List<Coin>();
@@ -56,19 +56,24 @@ namespace AutomatSellingDrink.DataAccess.Repositories
 
         }
 
-        public async Task GetAvailableDepositCoinsAsync()
+        public async Task<Core.Models.Drink> GetDrinkAsync(Core.Models.Drink drink)
         {
-            
+            var result = await _applicationDbContext.Drinks.Where(x => x.Name == drink.Name).FirstOrDefaultAsync();
+            return _mapper.Map<Entities.Drink,Core.Models.Drink>(result);
         }
 
-        public async Task BuyDrinkAsync()
+        public async Task BuyDrinkAsync(Core.Models.Drink drink)
         {
-            
+            _applicationDbContext.Drinks.Remove(_mapper.Map<Core.Models.Drink, Entities.Drink>(drink));
+            await _applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task GetAvailableDrinksAsync()
+        public async Task<Core.Models.Drink[]> GetAvailableDrinksAsync()
         {
-            
+            var drinks = await _applicationDbContext.Drinks.OrderBy(x => x.Cost).ToArrayAsync();
+            List<Core.Models.Drink> result = new List<Drink>();
+            foreach (var drink in drinks) result.Add(_mapper.Map<Entities.Drink, Core.Models.Drink>(drink));
+            return result.ToArray();
         }
     }
 }
