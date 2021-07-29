@@ -10,15 +10,20 @@ namespace AutomatSellingDrink.BusinessLogic.Services
 {
     public class UserAutomatService : IUserAutomatService
     {
-        private readonly IUserAutomatRepository _userAutomatRepository;
-        private readonly ISettingsService _settingsService;
-        private int _userSummMoney = 0;
+        private  IUserAutomatRepository _userAutomatRepository;
+        private  ISettingsService _settingsService;
+        private readonly IUserMemoryService _userMemoryService;
 
-        public UserAutomatService(IUserAutomatRepository userAutomatRepository, ISettingsService settingsService)
+        public UserAutomatService(
+            IUserAutomatRepository userAutomatRepository, 
+            ISettingsService settingsService,
+            IUserMemoryService userMemoryService)
         {
             _userAutomatRepository = userAutomatRepository;
             _settingsService = settingsService;
+            _userMemoryService = userMemoryService;
         }
+
         public async Task DepositCoinAsync(Core.Models.Coin coin)
         {
 
@@ -30,7 +35,7 @@ namespace AutomatSellingDrink.BusinessLogic.Services
                 (coin.Cost == 10 && settings.IsAllowUpload10Coin))
             {
                 await _userAutomatRepository.DepositCoinAsync(coin);
-                _userSummMoney += coin.Cost;
+                _userMemoryService.IncreaseMoney(coin.Cost);
             }
             else
             {
@@ -80,7 +85,13 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             var test = allCoins.Reverse().ToArray();
             for (int i = 0; i < allCoins.Count; i++)
             {
-                _userSummMoney -= coveredPrice(_userSummMoney,test[i].Key,test[i].Value);
+                _userMemoryService.DecreaseMoney(
+                    coveredPrice(
+                        _userMemoryService.GetUserMoney(), 
+                        test[i].Key, 
+                        test[i].Value
+                        )
+                    );
             }
             return await _userAutomatRepository.GetChangeAsync(toCgangeCoins.ToArray());
         }
@@ -97,9 +108,9 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             {
                 throw new DrinkNotFoundException("Напитка нет в наличии");
             }
-            if (drinkFromDb.Cost <= _userSummMoney)
+            if (drinkFromDb.Cost <= _userMemoryService.GetUserMoney())
             {
-                _userSummMoney -= drinkFromDb.Cost;
+                _userMemoryService.DecreaseMoney(drinkFromDb.Cost);
                 await _userAutomatRepository.BuyDrinkAsync(drinkFromDb);
             }
             else
@@ -107,7 +118,7 @@ namespace AutomatSellingDrink.BusinessLogic.Services
                 throw new NeedMoreMoneyException("Не достаточно денег для покупки выбранного написка");
             }
             
-            return _userSummMoney;
+            return _userMemoryService.GetUserMoney();
         }
 
         public async Task<Core.Models.Drink[]> GetAvailableDrinks()

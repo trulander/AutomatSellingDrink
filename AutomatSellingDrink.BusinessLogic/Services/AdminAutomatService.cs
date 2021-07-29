@@ -11,9 +11,9 @@ namespace AutomatSellingDrink.BusinessLogic.Services
         {
             _adminAutomatRepository = adminAutomatRepository;
         }
-        public async Task CreateDrink(Core.Models.Drink drink)
+        public async Task<Core.Models.Drink> CreateDrinkAsync(Core.Models.Drink drink)
         {
-            _adminAutomatRepository.CreateDrinkAsync(drink);
+            return await _adminAutomatRepository.CreateDrinkAsync(drink);
         }
 
         public async Task DeleteDrink()

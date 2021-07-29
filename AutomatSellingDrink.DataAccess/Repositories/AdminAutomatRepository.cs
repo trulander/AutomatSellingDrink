@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using AutomatSellingDrink.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutomatSellingDrink.DataAccess.Repositories
 {
@@ -17,10 +18,11 @@ namespace AutomatSellingDrink.DataAccess.Repositories
             _applicationDbContext = applicationDbContext;
             _mapper = mapper;
         }
-        public async Task CreateDrinkAsync(Core.Models.Drink newDrink)
+        public async Task<Core.Models.Drink> CreateDrinkAsync(Core.Models.Drink newDrink)
         {
-            await _applicationDbContext.Drinks.AddAsync(_mapper.Map<Entities.Drink>(newDrink));
+            var result = await _applicationDbContext.Drinks.AddAsync(_mapper.Map<Entities.Drink>(newDrink));
             await _applicationDbContext.SaveChangesAsync();
+            return _mapper.Map<Entities.Drink,Core.Models.Drink>(result.Entity);
         }
 
         public async Task DeleteDrinkAsync()

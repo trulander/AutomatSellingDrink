@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutomatSellingDrink.API.Contracts;
 using AutomatSellingDrink.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,15 +22,22 @@ namespace AutomatSellingDrink.API.Controllers
             _adminAutomatRepository = adminAutomatRepository;
             _mapper = mapper;
         }
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.Drink), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
         [HttpPost("createdrink")]
         public async Task<IActionResult> CreateDrinkAsync(Contracts.Drink newDrink)
         {
-            
-            await _adminAutomatRepository.CreateDrinkAsync(_mapper.Map<Contracts.Drink, Core.Models.Drink>(newDrink));
+            Core.Models.Drink drink = null;
+            try
+            {
+                drink = await _adminAutomatRepository.CreateDrinkAsync(_mapper.Map<Drink, Core.Models.Drink>(newDrink));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
 
-            return Ok();
+            return Ok(_mapper.Map<Core.Models.Drink, Contracts.Drink>(drink));
         }
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]

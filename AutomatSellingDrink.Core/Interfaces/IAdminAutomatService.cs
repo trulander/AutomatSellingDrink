@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
+using AutomatSellingDrink.Core.Models;
 
 namespace AutomatSellingDrink.Core.Interfaces
 {
     public interface IAdminAutomatService
     {
-        Task CreateDrink(Core.Models.Drink drink);
+        Task<Drink> CreateDrinkAsync(Core.Models.Drink drink);
         Task DeleteDrink();
         Task UpdateDrink();
         Task GetDrink();

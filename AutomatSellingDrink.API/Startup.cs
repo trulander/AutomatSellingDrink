@@ -52,17 +52,19 @@ namespace AutomatSellingDrink.API
                 conf.AddProfile<DataAccessMappingProfile>();
             });
 
+            services.AddSingleton<IUserMemoryService, UserMemoryService>();
+            
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IFileRepository, FileRepository>();
             
-            services.AddSingleton<ISettingsRepository, SettingsRepository>();
-            services.AddSingleton<ISettingsService, SettingsService>();
+            services.AddScoped<ISettingsRepository, SettingsRepository>();
+            services.AddScoped<ISettingsService, SettingsService>();
             
             services.AddScoped<IAdminAutomatRepository, AdminAutomatRepository>();
             services.AddScoped<IAdminAutomatService, AdminAutomatService>();
             
-            services.AddSingleton<IUserAutomatRepository, UserAutomatRepository>();
-            services.AddSingleton<IUserAutomatService, UserAutomatService>();
+            services.AddScoped<IUserAutomatRepository, UserAutomatRepository>();
+            services.AddScoped<IUserAutomatService, UserAutomatService>();
             
             services.AddControllers();
             services.AddSwaggerGen(c =>
