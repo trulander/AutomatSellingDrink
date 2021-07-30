@@ -12,14 +12,14 @@ namespace AutomatSellingDrink.API.Controllers
     [Route("[controller]")]
     public class AdminAutomatController: ControllerBase
     {
-        private readonly IAdminAutomatRepository _adminAutomatRepository;
+        private readonly IAdminAutomatService _adminAutomatService;
         private readonly IMapper _mapper;
 
         public AdminAutomatController(
-            IAdminAutomatRepository adminAutomatRepository,
+            IAdminAutomatService adminAutomatService,
             IMapper mapper)
         {
-            _adminAutomatRepository = adminAutomatRepository;
+            _adminAutomatService = adminAutomatService;
             _mapper = mapper;
         }
         [ProducesResponseType(typeof(Contracts.Drink), (int) HttpStatusCode.OK)]
@@ -30,7 +30,7 @@ namespace AutomatSellingDrink.API.Controllers
             Core.Models.Drink drink = null;
             try
             {
-                drink = await _adminAutomatRepository.CreateDrinkAsync(_mapper.Map<Drink, Core.Models.Drink>(newDrink));
+                drink = await _adminAutomatService.CreateDrinkAsync(_mapper.Map<Drink, Core.Models.Drink>(newDrink));
             }
             catch (Exception e)
             {
@@ -42,18 +42,19 @@ namespace AutomatSellingDrink.API.Controllers
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        [HttpDelete("deletedrink")]
-        public void DeleteDrink()
+        [HttpDelete("deletealldrinksbyname")]
+        public async Task<IActionResult> DeleteAllDrinksByNameAsync(string nameDrink)
         {
-            
+            await _adminAutomatService.DeleteAllDrinksByNameAsync(nameDrink);
+            return Ok();
         }
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
         [HttpPut("updatedrink")]
-        public void UpdateDrink()
+        public void UpdateDrinkAsync(Contracts.Drink drink)
         {
-            
+            _adminAutomatService.UpdateDrinkAsync(_mapper.Map<Contracts.Drink,Core.Models.Drink>(drink));
         }
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]

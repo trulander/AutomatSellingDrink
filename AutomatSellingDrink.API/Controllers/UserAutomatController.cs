@@ -33,9 +33,7 @@ namespace AutomatSellingDrink.API.Controllers
             {
                 result = new Coin()
                 {
-                    Cost = coin.Cost,
-                    IsUserOwner = true
-                    
+                    Cost = coin.Cost
                 };
                 await _userAutomatService.DepositCoinAsync(result);
             }

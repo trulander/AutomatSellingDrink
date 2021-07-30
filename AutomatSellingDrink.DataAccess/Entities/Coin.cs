@@ -4,6 +4,5 @@
     {
         public int Id { get; set; }
         public int Cost { get; set; }
-        public bool IsUserOwner { get; set; }
     }
 }

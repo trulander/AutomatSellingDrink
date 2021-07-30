@@ -44,7 +44,7 @@ namespace AutomatSellingDrink.API
                 // {
                 //     b.MigrationsAssembly("AutomatSellingDrink.API");
                 // });
-            }, ServiceLifetime.Singleton);
+            }, ServiceLifetime.Scoped);
             
             services.AddAutoMapper(conf =>
             {
