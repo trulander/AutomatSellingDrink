@@ -6,6 +6,7 @@ using AutomatSellingDrink.Core.Interfaces;
 using AutomatSellingDrink.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Coin = AutomatSellingDrink.Core.Models.Coin;
+using Drink = AutomatSellingDrink.API.Contracts.Drink;
 using IMapper = AutoMapper.IMapper;
 
 namespace AutomatSellingDrink.API.Controllers
@@ -107,10 +108,11 @@ namespace AutomatSellingDrink.API.Controllers
         [HttpGet("getavailabledrinks")]
         public async Task<IActionResult> GetAvailableDrinksAsync()
         {
-            List<Contracts.Drink> result = null;
+            List<Contracts.Drink> result = new List<Drink>();
             try
             {
-                foreach (var drink in await _userAutomatService.GetAvailableDrinks())
+                var drinks = await _userAutomatService.GetAvailableDrinks();
+                foreach (var drink in drinks)
                 {
                     result.Add(_mapper.Map<Core.Models.Drink, Contracts.Drink>(drink));
                 }

@@ -27,6 +27,7 @@ namespace AutomatSellingDrink.API
             Configuration = configuration;
         }
 
+        private readonly string corsPoliticName = "CorsPolitics";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -45,6 +46,15 @@ namespace AutomatSellingDrink.API
                 //     b.MigrationsAssembly("AutomatSellingDrink.API");
                 // });
             }, ServiceLifetime.Scoped);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: corsPoliticName,
+                    builder =>
+                    {
+                        builder.WithOrigins(Configuration.GetSection("UrlFrontend").Value);
+                    });
+            });
             
             services.AddAutoMapper(conf =>
             {
@@ -89,6 +99,7 @@ namespace AutomatSellingDrink.API
 
             app.UseRouting();
 
+            app.UseCors(corsPoliticName);
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

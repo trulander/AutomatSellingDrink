@@ -4,6 +4,8 @@ import { Layout } from './components/Layout';
 import { Home } from './components/Home';
 import { FetchData } from './components/FetchData';
 import { Counter } from './components/Counter';
+import {UserInterface} from './components/UserInterface';
+import {AdminInterface} from './components/AdminInterface';
 
 import './custom.css'
 
@@ -15,7 +17,9 @@ export default class App extends Component {
       <Layout>
         <Route exact path='/' component={Home} />
         <Route path='/counter' component={Counter} />
-        <Route path='/fetch-data' component={FetchData} />
+          <Route path='/fetch-data' component={FetchData} />
+          <Route path='/user-interface' component={UserInterface} />
+          <Route path='/admin-interface' component={AdminInterface} />
       </Layout>
     );
   }
