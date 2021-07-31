@@ -67,15 +67,11 @@ namespace AutomatSellingDrink.API.Controllers
         [HttpGet("getalldrinks")]
         public async Task<IActionResult> GetAllDrinksAsync()
         {
-            List<Contracts.CoinAdmin> result = new List<Contracts.CoinAdmin>();
-            var coreCoins = await _adminAutomatService.GetAllDrinksAsync();
-            foreach (var coin in coreCoins)
+            List<Contracts.Drink> result = new List<Contracts.Drink>();
+            var coreDrinks = await _adminAutomatService.GetAllDrinksAsync();
+            foreach (var drink in coreDrinks)
             {
-                result.Add(new Contracts.CoinAdmin()
-                {
-                    Cost = coin.Cost,
-                    Count = coin.Count
-                });
+                result.Add(_mapper.Map<Core.Models.Drink, Contracts.Drink>(drink));
             }
 
             return Ok(result.ToArray());
