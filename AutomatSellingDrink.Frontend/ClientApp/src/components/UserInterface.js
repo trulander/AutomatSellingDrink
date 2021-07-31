@@ -13,13 +13,14 @@ export class UserInterface extends Component {
             drinks: []
         };
         this.handleBalanceChange = this.handleBalanceChange.bind(this);
+        this.handleDrinksChange = this.handleDrinksChange.bind(this);
     }
 
     componentDidMount() {
         this.populateWeatherData();
     }
 
-    static renderUserInterface(getavailabledrinks, handler) {
+    static renderUserInterface(getavailabledrinks, handleDrinksChange) {
         return (
             <table className='table table-striped' aria-labelledby="tabelLabel">
                 <thead>
@@ -38,7 +39,7 @@ export class UserInterface extends Component {
                         <td>{drinks.fileId}</td>
                         <td><BuyDrink
                             name={drinks.name}
-                            onBalanceChange={handler} />
+                            onDrinksChange={handleDrinksChange} />
                         </td>
                     </tr>
                 )}
@@ -53,10 +54,17 @@ export class UserInterface extends Component {
         });
     }
 
+    handleDrinksChange(balance) {
+        this.setState({
+            balance: balance
+        });
+        this.populateWeatherData();
+    }
+
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : UserInterface.renderUserInterface(this.state.drinks, this.handleBalanceChange);
+            : UserInterface.renderUserInterface(this.state.drinks, this.handleDrinksChange);
         const balance = this.state.balance;
         return (
             <div>
