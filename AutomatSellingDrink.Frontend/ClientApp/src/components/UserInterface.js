@@ -27,6 +27,7 @@ export class UserInterface extends Component {
                 <tr>
                     <th>Название напитка</th>
                     <th>Цена</th>
+                    <th>В наличии</th>
                     <th>ImageId</th>
                     <th></th>
                 </tr>
@@ -36,6 +37,7 @@ export class UserInterface extends Component {
                     <tr key={drinks.name}>
                         <td>{drinks.name}</td>
                         <td>{drinks.cost}</td>
+                        <td>{drinks.count}</td>
                         <td>{drinks.fileId}</td>
                         <td><BuyDrink
                             name={drinks.name}

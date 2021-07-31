@@ -7,11 +7,13 @@ namespace AutomatSellingDrink.Core.Interfaces
     public interface IAdminAutomatRepository
     {
         Task<Drink> CreateDrinkAsync(Drink newDrink);
-        Task DeleteAllDrinksByNameAsync(string nameDrink);
-        Task UpdateDrinkAsync(Drink drink);
+        Task DeleteDrinkByNameAsync(string nameDrink);
+        Task<Core.Models.Drink> UpdateDrinkAsync(Drink drink);
         Task<Core.Models.Drink> GetDrinkAsync(string name);
-        Task<Core.Models.Drink[]> GetAllDrinksAsync(string name);
-        Task UpdateQuantityCoinsAsync(int coinCost, int quantity);
-        Task<int> GetQuantityCoinsAsync(int coinCost);
+        Task<Core.Models.Drink[]> GetAllDrinksAsync();
+        Task<Core.Models.Coin> CreateCoinAsync(Core.Models.Coin coin);
+        Task<Coin> UpdateCoinAsync(Core.Models.Coin coin);
+        Task<Coin> GetCoinAsync(Core.Models.Coin coin);
+        Task<Core.Models.Coin[]> GetAllCoinsAsync();
     }
 }

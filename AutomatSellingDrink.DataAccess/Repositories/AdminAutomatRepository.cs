@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using AutomatSellingDrink.Core.Exceptions;
 using AutomatSellingDrink.Core.Interfaces;
 using AutomatSellingDrink.Core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -29,24 +30,23 @@ namespace AutomatSellingDrink.DataAccess.Repositories
             return _mapper.Map<Entities.Drink,Core.Models.Drink>(result.Entity);
         }
 
-        public async Task DeleteAllDrinksByNameAsync(string nameDrink)
+        public async Task DeleteDrinkByNameAsync(string nameDrink)
         {
             _applicationDbContext.Drinks.RemoveRange(_applicationDbContext.Drinks.Where(x=>x.Name == nameDrink));
             await _applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateDrinkAsync(Drink drink)
+        public async Task<Core.Models.Drink> UpdateDrinkAsync(Drink drink)
         {
-            var updatedDrink = _applicationDbContext.Drinks.Where(x => x.Name == drink.Name).ToArray();
-            foreach (var unit in updatedDrink)
-            {
-                unit.Name = drink.Name;
-                unit.Cost = drink.Cost;
-                unit.FileId = unit.FileId;
-            }
-            
-           // _applicationDbContext.Drinks.UpdateRange(updatedDrink);
+            var updatedDrink = await _applicationDbContext.Drinks.Where(x => x.Name == drink.Name).FirstOrDefaultAsync();
+            updatedDrink.Name = drink.Name;
+            updatedDrink.Cost = drink.Cost;
+            updatedDrink.FileId = drink.FileId;
+            updatedDrink.Count = drink.Count;
+
             _applicationDbContext.SaveChangesAsync();
+            
+            return _mapper.Map<Entities.Drink, Core.Models.Drink>(updatedDrink);
         }
 
         public async Task<Core.Models.Drink> GetDrinkAsync(string name)
@@ -54,10 +54,11 @@ namespace AutomatSellingDrink.DataAccess.Repositories
             var result = await _applicationDbContext.Drinks.Where(x => x.Name == name).FirstOrDefaultAsync();
             return _mapper.Map<Entities.Drink,Core.Models.Drink>(result);
         }
+        
 
-        public async Task<Core.Models.Drink[]> GetAllDrinksAsync(string name)
+        public async Task<Core.Models.Drink[]> GetAllDrinksAsync()
         {
-            var drinks = await _applicationDbContext.Drinks.Where(x => x.Name == name).ToArrayAsync();
+            var drinks = await _applicationDbContext.Drinks.ToArrayAsync();
             List<Core.Models.Drink> result = new List<Drink>();
             foreach (var drink in drinks)
             {
@@ -66,37 +67,44 @@ namespace AutomatSellingDrink.DataAccess.Repositories
             return result.ToArray();
         }
 
-        public async Task UpdateQuantityCoinsAsync(int coinCost, int quantity)
+        public async Task<Core.Models.Coin> CreateCoinAsync(Core.Models.Coin coin)
         {
-            var coins = _applicationDbContext.Coins.Where(X => X.Cost == coinCost).ToArray();
-            if (coins.Length > quantity)
+            var result = await _applicationDbContext.Coins.AddAsync(_mapper.Map<Core.Models.Coin, Entities.Coin>(coin));
+            await _applicationDbContext.SaveChangesAsync();
+            return _mapper.Map<Entities.Coin,Core.Models.Coin>(result.Entity);
+        }
+        
+        public async Task<Core.Models.Coin> UpdateCoinAsync(Core.Models.Coin coin)
+        {
+            var newCoin = await _applicationDbContext.Coins.Where(X => X.Cost == coin.Cost).FirstOrDefaultAsync();
+            
+            if (coin == null )
             {
-                List<Entities.Coin> coinsToRemove = new List<Coin>();
-                for (int i = 0; i < quantity - coins.Length; i++)
-                {
-                    coinsToRemove.Add(coins[i]);
-                }
-                _applicationDbContext.Coins.RemoveRange(coinsToRemove);
-            }else if (coins.Length < quantity)
-            {
-                List<Entities.Coin> coinsToAdd = new List<Coin>();
-                for (int i = 0; i < quantity - coins.Length; i++)
-                {
-                    coinsToAdd.Add(new Coin()
-                    {
-                        Cost = coinCost
-                    });
-                }
-                await _applicationDbContext.Coins.AddRangeAsync(coinsToAdd);
+                throw new CoinNotFoundException("Такой монеты не существует");
             }
 
+            newCoin.Cost = coin.Cost;
+            newCoin.Count = coin.Count;
+            newCoin.IsAllowToDeposit = coin.IsAllowToDeposit;
             await _applicationDbContext.SaveChangesAsync();
+            return _mapper.Map<Entities.Coin, Core.Models.Coin>(newCoin);
         }
 
-        public async Task<int> GetQuantityCoinsAsync(int coinCost)
+        public async Task<Core.Models.Coin> GetCoinAsync(Core.Models.Coin coin)
         {
-            var result = await _applicationDbContext.Coins.Where(X => X.Cost == coinCost).CountAsync();
-            return result;
+            var result = await _applicationDbContext.Coins.Where(X => X.Cost == coin.Cost).FirstOrDefaultAsync();
+            return _mapper.Map<Entities.Coin, Core.Models.Coin>(result);
+        }
+        
+        public async Task<Core.Models.Coin[]> GetAllCoinsAsync()
+        {
+            var coins = await _applicationDbContext.Coins.ToArrayAsync();
+            List<Core.Models.Coin> result = new List<Core.Models.Coin>();
+            foreach (var coin in coins)
+            {
+                result.Add(_mapper.Map<Entities.Coin, Core.Models.Coin>(coin));
+            }
+            return result.ToArray();
         }
     }
 }

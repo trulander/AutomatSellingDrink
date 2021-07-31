@@ -6,10 +6,11 @@ namespace AutomatSellingDrink.Core.Interfaces
     public interface IUserAutomatRepository
     {
         Task DepositCoinAsync(Coin coin);
-        Task<Coin[]> GetChangeAsync(Core.Models.Coin[] coins);
+        Task GetChangeAsync(Core.Models.Coin[] coins);
         Task<Core.Models.Coin[]> GetAllCoinsAsync();
+        Task<Core.Models.Coin> GetCoinAsync(Core.Models.Coin coin);
         Task BuyDrinkAsync(string name);
-        Task<Drink[]> GetAvailableDrinksAsync();
+        Task<Drink[]> GetDrinksAsync();
         Task<Core.Models.Drink> GetDrinkAsync(string name);
     }
 }

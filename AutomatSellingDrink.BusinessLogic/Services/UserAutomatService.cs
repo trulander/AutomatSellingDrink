@@ -11,28 +11,24 @@ namespace AutomatSellingDrink.BusinessLogic.Services
     public class UserAutomatService : IUserAutomatService
     {
         private  IUserAutomatRepository _userAutomatRepository;
-        private  ISettingsService _settingsService;
         private readonly IUserMemoryService _userMemoryService;
 
         public UserAutomatService(
-            IUserAutomatRepository userAutomatRepository, 
-            ISettingsService settingsService,
+            IUserAutomatRepository userAutomatRepository,
             IUserMemoryService userMemoryService)
         {
             _userAutomatRepository = userAutomatRepository;
-            _settingsService = settingsService;
             _userMemoryService = userMemoryService;
         }
 
-        public async Task<Core.Models.Balance> DepositCoinAsync(Core.Models.Coin coin)
+        public async Task<Core.Models.Balance> DepositCoinAsync(Core.Models.Coin addCoin)
         {
-            var settings = await _settingsService.LoadSettingsAsync();
-            
-            if ((coin.Cost == 1 && settings.IsAllowUpload1Coin) || 
-                (coin.Cost == 2 && settings.IsAllowUpload2Coin) ||
-                (coin.Cost == 5 && settings.IsAllowUpload5Coin) ||
-                (coin.Cost == 10 && settings.IsAllowUpload10Coin))
+            var coin = await GetCoinAsync(addCoin);
+
+
+            if (coin != null && coin.Cost == addCoin.Cost && coin.IsAllowToDeposit)
             {
+                coin.Count += 1;
                 await _userAutomatRepository.DepositCoinAsync(coin);
                 _userMemoryService.IncreaseMoney(coin.Cost);
             }
@@ -40,7 +36,7 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             {
                 throw new NotAllowCoinException("Данная монета не доступна для внесения");
             }
-            
+
             var result = new Balance()
             {
                 Summ = _userMemoryService.GetUserMoney()
@@ -51,65 +47,56 @@ namespace AutomatSellingDrink.BusinessLogic.Services
 
         public async Task<Core.Models.Coin[]> GetChangeAsync()
         {
-            var rawCoins = await _userAutomatRepository.GetAllCoinsAsync();
-            List<Coin> toCgangeCoins = new List<Coin>();
-
-            Dictionary<int, int> allCoins = new Dictionary<int, int>();
+            var coins = await _userAutomatRepository.GetAllCoinsAsync();
+            List<Core.Models.Coin> result = new List<Coin>();
             
-            foreach (var coin in rawCoins)
-            {
-                if (allCoins.ContainsKey(coin.Cost))
-                {
-                    allCoins[coin.Cost] += 1;
-                }
-                else
-                {
-                    allCoins.Add(coin.Cost, 1);
-                }
-            }
-            
-            int coveredPrice(int summToChange,int price, int maxNo)
+            int coveredPrice(int summToChange,ref Core.Models.Coin coin)
             {
                 int counted = 0;
-                int Num = summToChange / price;
-                if (maxNo == 0)
+                int Num = summToChange / coin.Cost;
+                if (coin.Count == 0)
                     return 0;
-                if (maxNo != -1)             //-i is infinit
-                    if (Num > maxNo - counted)
-                        Num = maxNo;
+                if (coin.Count != -1)             //-i is infinit
+                    if (Num > coin.Count - counted)
+                        Num = coin.Count;
                 for (int i = 0; i < Num; i++)
                 {
-                    toCgangeCoins.Add(new Coin()
-                    {
-                        Cost = price
-                    });
+                    result.Add(coin);
+                    coin.Count -= 1;
                 }
-                return Num * price;
+                return Num * coin.Cost;
             }
 
-            var test = allCoins.Reverse().ToArray();
-            for (int i = 0; i < allCoins.Count; i++)
+            var test = coins.Reverse().ToArray();
+            for (int i = 0; i < coins.Length; i++)
             {
                 _userMemoryService.DecreaseMoney(
                     coveredPrice(
                         _userMemoryService.GetUserMoney(), 
-                        test[i].Key, 
-                        test[i].Value
+                        ref coins[i]
                         )
                     );
             }
-            return await _userAutomatRepository.GetChangeAsync(toCgangeCoins.ToArray());
+            await _userAutomatRepository.GetChangeAsync(coins);
+            return result.ToArray();
         }
 
-        public async Task<Core.Models.Settings> GetAvailableDepositCoins()
+        public async Task<Core.Models.Coin[]> GetAllCoinsAsync()
         {
-            return await _settingsService.LoadSettingsAsync();
+            var result = await _userAutomatRepository.GetAllCoinsAsync();
+            return result;
+        }
+        
+        public async Task<Core.Models.Coin> GetCoinAsync(Core.Models.Coin coin)
+        {
+            var result = await _userAutomatRepository.GetCoinAsync(coin);
+            return result;
         }
 
         public async Task<Core.Models.Balance> BuyDrinkAsync(string name)
         {
             Core.Models.Drink drinkFromDb = await _userAutomatRepository.GetDrinkAsync(name);
-            if (drinkFromDb == null)
+            if (drinkFromDb == null || drinkFromDb.Count == 0)
             {
                 throw new DrinkNotFoundException("Напитка нет в наличии");
             }
@@ -130,9 +117,9 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Core.Models.Drink[]> GetAvailableDrinks()
+        public async Task<Core.Models.Drink[]> GetDrinksAsync()
         {
-            var result = await _userAutomatRepository.GetAvailableDrinksAsync();
+            var result = await _userAutomatRepository.GetDrinksAsync();
             if (result == null || result.Length == default(int))
             {
                 throw new DrinkNotFoundException("Ни одного напитка нет в наличии");

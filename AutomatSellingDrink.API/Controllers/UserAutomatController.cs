@@ -25,12 +25,6 @@ namespace AutomatSellingDrink.API.Controllers
             _userAutomatService = userAutomatService;
             _mapper = mapper;
         }
-        //
-        // [HttpOptions("depositcoins")]
-        // public async Task<IActionResult> DepositCoinCORS()
-        // {
-        //     return Ok();
-        // }
         
         [ProducesResponseType(typeof(Contracts.Balance), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
@@ -78,27 +72,11 @@ namespace AutomatSellingDrink.API.Controllers
             return Ok(result.ToArray());
         }
 
-        [ProducesResponseType(typeof(Contracts.Settings), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        [HttpGet("getavailabledepositcoins")]
-        public async Task<IActionResult> GetAvailableDepositCoins()
-        {
-            Contracts.Settings result = null;
-            try
-            {
-                result = _mapper.Map<Core.Models.Settings, Contracts.Settings>(
-                    await _userAutomatService.GetAvailableDepositCoins());
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-            return Ok(result);
-        }
+
 
         [ProducesResponseType(typeof(Contracts.Balance), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        [HttpPost("buyDrink")]
+        [HttpPost("buyrink")]
         public async Task<IActionResult> BuyDrinkAsync([FromForm]string name)
         {
             Contracts.Balance summMoney = new Balance();
@@ -117,13 +95,13 @@ namespace AutomatSellingDrink.API.Controllers
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        [HttpGet("getavailabledrinks")]
-        public async Task<IActionResult> GetAvailableDrinksAsync()
+        [HttpGet("getdrinks")]
+        public async Task<IActionResult> GetDrinksAsync()
         {
             List<Contracts.Drink> result = new List<Drink>();
             try
             {
-                var drinks = await _userAutomatService.GetAvailableDrinks();
+                var drinks = await _userAutomatService.GetDrinksAsync();
                 foreach (var drink in drinks)
                 {
                     result.Add(_mapper.Map<Core.Models.Drink, Contracts.Drink>(drink));
@@ -137,5 +115,26 @@ namespace AutomatSellingDrink.API.Controllers
             return Ok(result.ToArray());
         }
         
+        
+        [ProducesResponseType(typeof(Contracts.Coin), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [HttpGet("getcoins")]
+        public async Task<IActionResult> GetAllCoinsAsync()
+        {
+            List<Contracts.Coin> result = new List<Contracts.Coin>();
+            try
+            {
+                foreach (var coin in await _userAutomatService.GetAllCoinsAsync())
+                {
+                    result.Add(_mapper.Map<Core.Models.Coin, Contracts.Coin>(coin));
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            
+            return Ok(result);
+        }
     }
 }

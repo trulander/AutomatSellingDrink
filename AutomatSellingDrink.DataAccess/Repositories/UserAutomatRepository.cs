@@ -22,40 +22,39 @@ namespace AutomatSellingDrink.DataAccess.Repositories
         }
         public async Task DepositCoinAsync(Coin coin)
         {
-            await _applicationDbContext.Coins.AddAsync(_mapper.Map<Core.Models.Coin, Entities.Coin>(coin));
+            var entity = await _applicationDbContext.Coins.Where(x => x.Id == coin.Id).FirstOrDefaultAsync();
+            entity.Count = coin.Count;
+            _applicationDbContext.Coins.Update(entity);
             await _applicationDbContext.SaveChangesAsync();
-
         }
 
 
         public async Task<Core.Models.Coin[]> GetAllCoinsAsync()
         {
-            var coins = await _applicationDbContext.Coins.OrderBy(x => x.Cost).ToArrayAsync();
-            List<Core.Models.Coin> result = new List<Coin>();
-            foreach (var coin in coins) result.Add(_mapper.Map<Entities.Coin, Core.Models.Coin>(coin));
+            var coins = await _applicationDbContext.Coins.OrderByDescending(x=>x.Cost).ToArrayAsync();
+            List<Core.Models.Coin> result = new List<Core.Models.Coin>();
+            foreach (var coin in coins)
+            {
+                result.Add(_mapper.Map<Entities.Coin, Core.Models.Coin>(coin));
+            }
             return result.ToArray();
         }
         
-        public async Task<Core.Models.Coin[]> GetChangeAsync(Core.Models.Coin[] coins)
+        public async Task<Core.Models.Coin> GetCoinAsync(Core.Models.Coin coin)
         {
-            List<Core.Models.Coin> result = new List<Coin>();
+            var result = await _applicationDbContext.Coins.Where(X => X.Cost == coin.Cost).FirstOrDefaultAsync();
+            return _mapper.Map<Entities.Coin, Core.Models.Coin>(result);
+        }
+        
+        public async Task GetChangeAsync(Core.Models.Coin[] coins)
+        {
             foreach (var coin in coins)
             {
-                var coinToRemove = new Entities.Coin()
-                {
-                    Cost = coin.Cost
-                };
-                //_applicationDbContext.Coins.RemoveRange(_applicationDbContext.Coins.Where(x=>x.Cost = coin.Cost).Take());
-                result.Add(
-                    _mapper.Map<Entities.Coin,Core.Models.Coin>(
-                        _applicationDbContext.Coins.Remove(
-                            await _applicationDbContext.Coins.Where(x=>x.Cost == coin.Cost).FirstAsync()).Entity
-                        )
-                    );    
+                var entity = await _applicationDbContext.Coins.Where(x => x.Id == coin.Id).FirstOrDefaultAsync();
+                entity.Count = coin.Count;
+                _applicationDbContext.Coins.Update(entity);
             }
             await _applicationDbContext.SaveChangesAsync();
-            return result.ToArray();
-
         }
 
         public async Task<Core.Models.Drink> GetDrinkAsync(string name)
@@ -66,13 +65,20 @@ namespace AutomatSellingDrink.DataAccess.Repositories
 
         public async Task BuyDrinkAsync(string name)
         {
-            _applicationDbContext.Drinks.Remove(
-                await _applicationDbContext.Drinks.Where(x=>x.Name == name).FirstOrDefaultAsync()
-                );
+            var DrinkForUpdate = await _applicationDbContext.Drinks
+                .Where(x => x.Name == name)
+                .FirstOrDefaultAsync();
+            if (DrinkForUpdate.Count > 0)
+            {
+                DrinkForUpdate.Count -= 1;
+            }
+            _applicationDbContext.Drinks.Update(
+                DrinkForUpdate
+            );
             await _applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task<Core.Models.Drink[]> GetAvailableDrinksAsync()
+        public async Task<Core.Models.Drink[]> GetDrinksAsync()
         {
             var drinks = await _applicationDbContext.Drinks.OrderBy(x => x.Cost).ToArrayAsync();
             List<Core.Models.Drink> result = new List<Drink>();

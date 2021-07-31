@@ -1,8 +1,7 @@
-﻿namespace AutomatSellingDrink.DataAccess.Entities
+﻿namespace AutomatSellingDrink.API.Contracts
 {
-    public class Coin
+    public class CoinAdmin
     {
-        public int Id { get; set; }
         public int Cost { get; set; }
         public int Count { get; set; }
         public bool IsAllowToDeposit { get; set; }

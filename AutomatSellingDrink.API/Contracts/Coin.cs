@@ -3,5 +3,6 @@
     public class Coin
     {
         public int Cost { get; set; }
+        public bool IsAllowToDeposit { get; set; }
     }
 }

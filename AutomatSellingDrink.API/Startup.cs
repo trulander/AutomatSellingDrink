@@ -69,8 +69,6 @@ namespace AutomatSellingDrink.API
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IFileRepository, FileRepository>();
             
-            services.AddScoped<ISettingsRepository, SettingsRepository>();
-            services.AddScoped<ISettingsService, SettingsService>();
             
             services.AddScoped<IAdminAutomatRepository, AdminAutomatRepository>();
             services.AddScoped<IAdminAutomatService, AdminAutomatService>();

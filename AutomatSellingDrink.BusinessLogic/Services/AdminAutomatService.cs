@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
+using AutomatSellingDrink.Core.Exceptions;
 using AutomatSellingDrink.Core.Interfaces;
 
 namespace AutomatSellingDrink.BusinessLogic.Services
@@ -7,28 +8,30 @@ namespace AutomatSellingDrink.BusinessLogic.Services
     public class AdminAutomatService : IAdminAutomatService
     {
         private readonly IAdminAutomatRepository _adminAutomatRepository;
-        private readonly ISettingsService _settingsService;
 
         public AdminAutomatService(
-            IAdminAutomatRepository adminAutomatRepository,
-            ISettingsService settingsService)
+            IAdminAutomatRepository adminAutomatRepository)
         {
             _adminAutomatRepository = adminAutomatRepository;
-            _settingsService = settingsService;
         }
         public async Task<Core.Models.Drink> CreateDrinkAsync(Core.Models.Drink drink)
         {
+            var oldDrink = await GetDrinkAsync(drink.Name);
+            if (oldDrink != null)
+            {
+                throw new DrinkExistException("Такой напиток уже существует");
+            }
             return await _adminAutomatRepository.CreateDrinkAsync(drink);
         }
 
-        public async Task DeleteAllDrinksByNameAsync(string nameDrink)
+        public async Task DeleteDrinkByNameAsync(string nameDrink)
         {
-            await _adminAutomatRepository.DeleteAllDrinksByNameAsync(nameDrink);
+            await _adminAutomatRepository.DeleteDrinkByNameAsync(nameDrink);
         }
 
-        public async Task UpdateDrinkAsync(Core.Models.Drink drink)
+        public async Task<Core.Models.Drink> UpdateDrinkAsync(Core.Models.Drink drink)
         {
-            _adminAutomatRepository.UpdateDrinkAsync(drink);
+           return await _adminAutomatRepository.UpdateDrinkAsync(drink);
         }
 
         public async Task<Core.Models.Drink> GetDrinkAsync(string name)
@@ -37,32 +40,47 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Core.Models.Drink[]> GetAllDrinksAsync(string name)
+        public async Task<Core.Models.Drink[]> GetAllDrinksAsync()
         {
-            var result = await _adminAutomatRepository.GetAllDrinksAsync(name);
+            var result = await _adminAutomatRepository.GetAllDrinksAsync();
             return result;
         }
 
-        public async Task UpdateQuantityCoins(int coinsCost, int quantity)
+        public async Task<Core.Models.Coin> CreateCoinAsync(Core.Models.Coin coin)
         {
-           await _adminAutomatRepository.UpdateQuantityCoinsAsync(coinsCost, quantity);
+            var oldDrink = await GetCoinAsync(coin);
+            if (oldDrink != null)
+            {
+                throw new CoinExistException("Такая монета уже существует");
+            }
+
+            if (coin.Cost <=0 )
+            {
+                throw new NotAllowCoinException("Стоимость монеты должна быть больше 0");
+            }
+            return await _adminAutomatRepository.CreateCoinAsync(coin);
+        }
+        
+        public async Task<Core.Models.Coin> UpdateCoinAsync(Core.Models.Coin coin)
+        {
+            if (coin.Cost <=0 )
+            {
+                throw new NotAllowCoinException("Стоимость монеты должна быть больше 0");
+            }
+           return await _adminAutomatRepository.UpdateCoinAsync(coin);
         }
 
-        public async Task<int> GetQuantityCoins(int coinsCost)
+        public async Task<Core.Models.Coin> GetCoinAsync(Core.Models.Coin coin)
         {
-            var result = await _adminAutomatRepository.GetQuantityCoinsAsync(coinsCost);
+            var result = await _adminAutomatRepository.GetCoinAsync(coin);
             return result;
         }
 
-        public async Task UpdateAvailableDepositCoins(Core.Models.Settings settings)
+        public async Task<Core.Models.Coin[]> GetAllCoinsAsync()
         {
-            await _settingsService.SaveSettingsAsync(settings);
-        }
-
-        public async Task<Core.Models.Settings> GetAvailableDepositCoins()
-        {
-            var result = await _settingsService.LoadSettingsAsync();
+            var result = await _adminAutomatRepository.GetAllCoinsAsync();
             return result;
         }
+
     }
 }
