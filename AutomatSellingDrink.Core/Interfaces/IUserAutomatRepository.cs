@@ -8,8 +8,8 @@ namespace AutomatSellingDrink.Core.Interfaces
         Task DepositCoinAsync(Coin coin);
         Task<Coin[]> GetChangeAsync(Core.Models.Coin[] coins);
         Task<Core.Models.Coin[]> GetAllCoinsAsync();
-        Task BuyDrinkAsync(Core.Models.Drink drink);
+        Task BuyDrinkAsync(string name);
         Task<Drink[]> GetAvailableDrinksAsync();
-        Task<Core.Models.Drink> GetDrinkAsync(Core.Models.Drink drink);
+        Task<Core.Models.Drink> GetDrinkAsync(string name);
     }
 }

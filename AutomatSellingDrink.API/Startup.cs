@@ -52,7 +52,9 @@ namespace AutomatSellingDrink.API
                 options.AddPolicy(name: corsPoliticName,
                     builder =>
                     {
-                        builder.WithOrigins(Configuration.GetSection("UrlFrontend").Value);
+                        builder.WithOrigins(Configuration.GetSection("UrlFrontend").Value)
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
                     });
             });
             

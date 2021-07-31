@@ -5,10 +5,10 @@ namespace AutomatSellingDrink.Core.Interfaces
 {
     public interface IUserAutomatService
     {
-        Task DepositCoinAsync(Core.Models.Coin coin);
+        Task<Balance> DepositCoinAsync(Core.Models.Coin coin);
         Task<Coin[]> GetChangeAsync();
         Task<Settings> GetAvailableDepositCoins();
-        Task<int> BuyDrinkAsync(Core.Models.Drink drink);
+        Task<Balance> BuyDrinkAsync(string name);
         Task<Core.Models.Drink[]> GetAvailableDrinks();
     }
 }

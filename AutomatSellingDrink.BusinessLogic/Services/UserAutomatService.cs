@@ -24,9 +24,8 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             _userMemoryService = userMemoryService;
         }
 
-        public async Task DepositCoinAsync(Core.Models.Coin coin)
+        public async Task<Core.Models.Balance> DepositCoinAsync(Core.Models.Coin coin)
         {
-
             var settings = await _settingsService.LoadSettingsAsync();
             
             if ((coin.Cost == 1 && settings.IsAllowUpload1Coin) || 
@@ -42,6 +41,12 @@ namespace AutomatSellingDrink.BusinessLogic.Services
                 throw new NotAllowCoinException("Данная монета не доступна для внесения");
             }
             
+            var result = new Balance()
+            {
+                Summ = _userMemoryService.GetUserMoney()
+            };
+            
+            return result;
         }
 
         public async Task<Core.Models.Coin[]> GetChangeAsync()
@@ -101,9 +106,9 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             return await _settingsService.LoadSettingsAsync();
         }
 
-        public async Task<int> BuyDrinkAsync(Core.Models.Drink drink)
+        public async Task<Core.Models.Balance> BuyDrinkAsync(string name)
         {
-            Core.Models.Drink drinkFromDb = await _userAutomatRepository.GetDrinkAsync(drink);
+            Core.Models.Drink drinkFromDb = await _userAutomatRepository.GetDrinkAsync(name);
             if (drinkFromDb == null)
             {
                 throw new DrinkNotFoundException("Напитка нет в наличии");
@@ -111,14 +116,18 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             if (drinkFromDb.Cost <= _userMemoryService.GetUserMoney())
             {
                 _userMemoryService.DecreaseMoney(drinkFromDb.Cost);
-                await _userAutomatRepository.BuyDrinkAsync(drinkFromDb);
+                await _userAutomatRepository.BuyDrinkAsync(drinkFromDb.Name);
             }
             else
             {
                 throw new NeedMoreMoneyException("Не достаточно денег для покупки выбранного написка");
             }
             
-            return _userMemoryService.GetUserMoney();
+            var result = new Balance()
+            {
+                Summ = _userMemoryService.GetUserMoney()
+            };
+            return result;
         }
 
         public async Task<Core.Models.Drink[]> GetAvailableDrinks()

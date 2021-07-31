@@ -10,6 +10,7 @@ namespace AutomatSellingDrink.DataAccess
             CreateMap<Core.Models.Drink, Entities.Drink>().ReverseMap();
             CreateMap<Core.Models.File, Entities.File>().ReverseMap();
             CreateMap<Core.Models.Settings, Entities.Settings>().ReverseMap();
+            CreateMap<Core.Models.Balance, Entities.Balance>().ReverseMap();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -21,8 +22,9 @@ namespace AutomatSellingDrink.DataAccess.Repositories
         }
         public async Task DepositCoinAsync(Coin coin)
         {
-            _applicationDbContext.Coins.Add(_mapper.Map<Core.Models.Coin, Entities.Coin>(coin));
+            await _applicationDbContext.Coins.AddAsync(_mapper.Map<Core.Models.Coin, Entities.Coin>(coin));
             await _applicationDbContext.SaveChangesAsync();
+
         }
 
 
@@ -56,15 +58,17 @@ namespace AutomatSellingDrink.DataAccess.Repositories
 
         }
 
-        public async Task<Core.Models.Drink> GetDrinkAsync(Core.Models.Drink drink)
+        public async Task<Core.Models.Drink> GetDrinkAsync(string name)
         {
-            var result = await _applicationDbContext.Drinks.Where(x => x.Name == drink.Name).FirstOrDefaultAsync();
+            var result = await _applicationDbContext.Drinks.Where(x => x.Name == name).FirstOrDefaultAsync();
             return _mapper.Map<Entities.Drink,Core.Models.Drink>(result);
         }
 
-        public async Task BuyDrinkAsync(Core.Models.Drink drink)
+        public async Task BuyDrinkAsync(string name)
         {
-            _applicationDbContext.Drinks.Remove(_mapper.Map<Core.Models.Drink, Entities.Drink>(drink));
+            _applicationDbContext.Drinks.Remove(
+                await _applicationDbContext.Drinks.Where(x=>x.Name == name).FirstOrDefaultAsync()
+                );
             await _applicationDbContext.SaveChangesAsync();
         }
 
