@@ -43,7 +43,7 @@ namespace AutomatSellingDrink.API.Controllers
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        [HttpDelete("deletealldrinksbyname")]
+        [HttpDelete("deletedrinkbyname")]
         public async Task<IActionResult> DeleteDrinkByNameAsync(string nameDrink)
         {
             await _adminAutomatService.DeleteDrinkByNameAsync(nameDrink);
@@ -97,7 +97,7 @@ namespace AutomatSellingDrink.API.Controllers
 
         [ProducesResponseType(typeof(Contracts.CoinAdmin), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        [HttpGet("getcoins")]
+        [HttpGet("getallcoins")]
         public async Task<IActionResult> GetAllCoinsAsync()
         {
             List<Contracts.CoinAdmin> result = new List<Contracts.CoinAdmin>();

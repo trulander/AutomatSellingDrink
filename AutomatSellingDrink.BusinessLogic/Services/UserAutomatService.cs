@@ -117,9 +117,9 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             return result;
         }
 
-        public async Task<Core.Models.Drink[]> GetDrinksAsync()
+        public async Task<Core.Models.Drink[]> GetAllDrinksAsync()
         {
-            var result = await _userAutomatRepository.GetDrinksAsync();
+            var result = await _userAutomatRepository.GetAllDrinksAsync();
             if (result == null || result.Length == default(int))
             {
                 throw new DrinkNotFoundException("Ни одного напитка нет в наличии");

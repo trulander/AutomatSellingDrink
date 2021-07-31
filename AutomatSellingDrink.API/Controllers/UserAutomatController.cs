@@ -28,7 +28,7 @@ namespace AutomatSellingDrink.API.Controllers
         
         [ProducesResponseType(typeof(Contracts.Balance), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        [HttpPost("depositcoins")]
+        [HttpPost("depositcoin")]
         public async Task<IActionResult> DepositCoin(Contracts.Coin coin)
         {
             Balance result = new Balance();
@@ -76,7 +76,7 @@ namespace AutomatSellingDrink.API.Controllers
 
         [ProducesResponseType(typeof(Contracts.Balance), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        [HttpPost("buyrink")]
+        [HttpPost("buydrink")]
         public async Task<IActionResult> BuyDrinkAsync([FromForm]string name)
         {
             Contracts.Balance summMoney = new Balance();
@@ -95,13 +95,13 @@ namespace AutomatSellingDrink.API.Controllers
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        [HttpGet("getdrinks")]
-        public async Task<IActionResult> GetDrinksAsync()
+        [HttpGet("getalldrinks")]
+        public async Task<IActionResult> GetAllDrinksAsync()
         {
             List<Contracts.Drink> result = new List<Drink>();
             try
             {
-                var drinks = await _userAutomatService.GetDrinksAsync();
+                var drinks = await _userAutomatService.GetAllDrinksAsync();
                 foreach (var drink in drinks)
                 {
                     result.Add(_mapper.Map<Core.Models.Drink, Contracts.Drink>(drink));
@@ -118,7 +118,7 @@ namespace AutomatSellingDrink.API.Controllers
         
         [ProducesResponseType(typeof(Contracts.Coin), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        [HttpGet("getcoins")]
+        [HttpGet("getallcoins")]
         public async Task<IActionResult> GetAllCoinsAsync()
         {
             List<Contracts.Coin> result = new List<Contracts.Coin>();

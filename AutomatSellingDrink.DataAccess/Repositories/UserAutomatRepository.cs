@@ -78,7 +78,7 @@ namespace AutomatSellingDrink.DataAccess.Repositories
             await _applicationDbContext.SaveChangesAsync();
         }
 
-        public async Task<Core.Models.Drink[]> GetDrinksAsync()
+        public async Task<Core.Models.Drink[]> GetAllDrinksAsync()
         {
             var drinks = await _applicationDbContext.Drinks.OrderBy(x => x.Cost).ToArrayAsync();
             List<Core.Models.Drink> result = new List<Drink>();
