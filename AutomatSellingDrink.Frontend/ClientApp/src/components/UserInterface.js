@@ -80,7 +80,7 @@ export class UserInterface extends Component {
     }
 
     async populateWeatherData() {
-        const response = await fetch('https://localhost:5001/UserAutomat/getavailabledrinks');
+        const response = await fetch('https://localhost:5001/UserAutomat/getalldrinks');
         const data = await response.json();
         this.setState({
             drinks: data,

@@ -10,8 +10,8 @@ namespace AutomatSellingDrink.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Drink> builder)
         {
             builder.HasKey(x => x.Id);
-
-            builder.HasOne(x => x.Image);
+            //builder.OwnsOne(x => x.Image).HasOne<Entities.File>();
+            builder.HasOne(x => x.Image).WithOne();
         }
     }
 }

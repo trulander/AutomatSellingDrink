@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using AutomatSellingDrink.Core.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -13,13 +15,18 @@ namespace AutomatSellingDrink.API.Controllers
     public class FileController: ControllerBase
     {
         private readonly IFileService _fileService;
+        private readonly IMapper _mapper;
 
         public FileController(
-            IFileService fileService)
+            IFileService fileService,
+            IMapper mapper)
         {
             _fileService = fileService;
+            _mapper = mapper;
         }
         
+        [ProducesResponseType(typeof(Contracts.File), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpPost("uploadfile")]
         public async Task<IActionResult> UploadFileAsync(IFormFile uploadedFile)
         {
@@ -35,8 +42,7 @@ namespace AutomatSellingDrink.API.Controllers
                     return BadRequest(e.Message);
                 }
             }
-
-            return Ok(result);
+            return Ok(_mapper.Map<Core.Models.File, Contracts.File>(result));
 
         }
     }

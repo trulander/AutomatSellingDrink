@@ -80,7 +80,7 @@ namespace AutomatSellingDrink.DataAccess.Repositories
 
         public async Task<Core.Models.Drink[]> GetAllDrinksAsync()
         {
-            var drinks = await _applicationDbContext.Drinks.OrderBy(x => x.Cost).ToArrayAsync();
+            var drinks = await _applicationDbContext.Drinks.Include(x=>x.Image).OrderBy(x => x.Cost).ToArrayAsync();
             List<Core.Models.Drink> result = new List<Drink>();
             foreach (var drink in drinks) result.Add(_mapper.Map<Entities.Drink, Core.Models.Drink>(drink));
             return result.ToArray();

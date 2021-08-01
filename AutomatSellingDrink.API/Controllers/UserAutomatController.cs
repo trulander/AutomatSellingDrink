@@ -27,7 +27,7 @@ namespace AutomatSellingDrink.API.Controllers
         }
         
         [ProducesResponseType(typeof(Contracts.Balance), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpPost("depositcoin")]
         public async Task<IActionResult> DepositCoin(Contracts.Coin coin)
         {
@@ -44,14 +44,13 @@ namespace AutomatSellingDrink.API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new Error(e.Message));
             }
-
             return Ok(result);
         }
 
         [ProducesResponseType(typeof(Contracts.Coin[]), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpGet("getchange")]
         public async Task<IActionResult> GetChangeAsync()
         {
@@ -61,21 +60,20 @@ namespace AutomatSellingDrink.API.Controllers
                 var coins = await _userAutomatService.GetChangeAsync();
                 foreach (var coin in coins) 
                 {
-                    result.Add(_mapper.Map<Core.Models.Coin,Contracts.Coin>(coin));
+                    result.Add(_mapper.Map<Core.Models.Coin, Contracts.Coin>(coin));
                 }
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new Error(e.Message));
             }
-
             return Ok(result.ToArray());
         }
 
 
 
         [ProducesResponseType(typeof(Contracts.Balance), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpPost("buydrink")]
         public async Task<IActionResult> BuyDrinkAsync([FromForm]string name)
         {
@@ -88,13 +86,13 @@ namespace AutomatSellingDrink.API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new Error(e.Message));
             }
             return Ok(summMoney);
         }
 
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Drink[]), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpGet("getalldrinks")]
         public async Task<IActionResult> GetAllDrinksAsync()
         {
@@ -109,15 +107,14 @@ namespace AutomatSellingDrink.API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new Error(e.Message));
             }
-
             return Ok(result.ToArray());
         }
         
         
-        [ProducesResponseType(typeof(Contracts.Coin), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Coin[]), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpGet("getallcoins")]
         public async Task<IActionResult> GetAllCoinsAsync()
         {
@@ -131,10 +128,9 @@ namespace AutomatSellingDrink.API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new Error(e.Message));
             }
-            
-            return Ok(result);
+            return Ok(result.ToArray());
         }
     }
 }

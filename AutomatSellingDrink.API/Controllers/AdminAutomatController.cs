@@ -24,61 +24,79 @@ namespace AutomatSellingDrink.API.Controllers
             _mapper = mapper;
         }
         [ProducesResponseType(typeof(Contracts.Drink), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpPost("createdrink")]
-        public async Task<IActionResult> CreateDrinkAsync(Contracts.Drink newDrink)
+        public async Task<IActionResult> CreateDrinkAsync(Contracts.NewDrink newDrink)
         {
             Core.Models.Drink drink = null;
             try
             {
-                drink = await _adminAutomatService.CreateDrinkAsync(_mapper.Map<Drink, Core.Models.Drink>(newDrink));
+                drink = await _adminAutomatService.CreateDrinkAsync(_mapper.Map<Contracts.NewDrink, Core.Models.Drink>(newDrink));
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new Error(e.Message));
             }
-
             return Ok(_mapper.Map<Core.Models.Drink, Contracts.Drink>(drink));
         }
 
         [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpDelete("deletedrinkbyname")]
         public async Task<IActionResult> DeleteDrinkByNameAsync(string nameDrink)
         {
-            await _adminAutomatService.DeleteDrinkByNameAsync(nameDrink);
+            try
+            {
+                await _adminAutomatService.DeleteDrinkByNameAsync(nameDrink);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new Error(e.Message));
+            }
             return Ok();
         }
 
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Drink), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpPut("updatedrink")]
-        public async Task<IActionResult> UpdateDrinkAsync(Contracts.Drink drink)
+        public async Task<IActionResult> UpdateDrinkAsync(Contracts.NewDrink drink)
         {
             Core.Models.Drink result = null;
-            result = await _adminAutomatService.UpdateDrinkAsync(_mapper.Map<Contracts.Drink,Core.Models.Drink>(drink));
-            
+            try
+            {
+                result = await _adminAutomatService.UpdateDrinkAsync(_mapper.Map<Contracts.NewDrink, Core.Models.Drink>(drink));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new Error(e.Message));
+            }
             return Ok(_mapper.Map<Core.Models.Drink, Contracts.Drink>(result));
         }
 
 
-        [ProducesResponseType(typeof(Contracts.CoinAdmin), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Drink[]), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpGet("getalldrinks")]
         public async Task<IActionResult> GetAllDrinksAsync()
         {
             List<Contracts.Drink> result = new List<Contracts.Drink>();
-            var coreDrinks = await _adminAutomatService.GetAllDrinksAsync();
-            foreach (var drink in coreDrinks)
+            try
             {
-                result.Add(_mapper.Map<Core.Models.Drink, Contracts.Drink>(drink));
+                var coreDrinks = await _adminAutomatService.GetAllDrinksAsync();
+                foreach (var drink in coreDrinks)
+                {
+                    result.Add(_mapper.Map<Core.Models.Drink, Contracts.Drink>(drink));
+                }
             }
-
+            catch (Exception e)
+            {
+                return BadRequest(new Error(e.Message));
+            }
             return Ok(result.ToArray());
         }
 
         [ProducesResponseType(typeof(Contracts.CoinAdmin), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpPost("createcoin")]
         public async Task<IActionResult> CreateCoinAsync(Contracts.CoinAdmin coin)
         {
@@ -89,14 +107,13 @@ namespace AutomatSellingDrink.API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new Error(e.Message));
             }
-
             return Ok(_mapper.Map<Core.Models.Coin, Contracts.CoinAdmin>(result));
         }
 
-        [ProducesResponseType(typeof(Contracts.CoinAdmin), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.CoinAdmin[]), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpGet("getallcoins")]
         public async Task<IActionResult> GetAllCoinsAsync()
         {
@@ -110,14 +127,13 @@ namespace AutomatSellingDrink.API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new Error(e.Message));
             }
-            
-            return Ok(result);
+            return Ok(result.ToArray());
         }
 
         [ProducesResponseType(typeof(Contracts.CoinAdmin), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpPut("updatecoin")]
         public async Task<IActionResult> UpdateCoinAsync(Contracts.CoinAdmin coin)
         {
@@ -129,7 +145,7 @@ namespace AutomatSellingDrink.API.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new Error(e.Message));
             }
             return Ok(result);
         }

@@ -58,7 +58,7 @@ namespace AutomatSellingDrink.DataAccess.Repositories
 
         public async Task<Core.Models.Drink[]> GetAllDrinksAsync()
         {
-            var drinks = await _applicationDbContext.Drinks.ToArrayAsync();
+            var drinks = await _applicationDbContext.Drinks.Include(x=>x.Image).ToArrayAsync();
             List<Core.Models.Drink> result = new List<Drink>();
             foreach (var drink in drinks)
             {
