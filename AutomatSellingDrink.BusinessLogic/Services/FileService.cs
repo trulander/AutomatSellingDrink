@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutomatSellingDrink.Core.Interfaces;
@@ -18,7 +19,8 @@ namespace AutomatSellingDrink.BusinessLogic.Services
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _appEnvironment;
         private readonly ApplicationDbContext _applicationDbContext;
-        private string _path;
+        private string _phisicalPath;
+        private string _urlFrontandImages;
 
         public FileService(
             IFileRepository fileRepository,
@@ -32,8 +34,10 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             _mapper = mapper;
             _appEnvironment = appEnvironment;
             
-            _path = configuration.GetSection("PathUploadFiles").Value;
-            DirectoryInfo dirInfo = new DirectoryInfo(_path);
+            _phisicalPath = configuration.GetSection("PhisicalPathUploadFiles").Value;
+            _urlFrontandImages = configuration.GetSection("UrlFrontendImages").Value;
+            
+            DirectoryInfo dirInfo = new DirectoryInfo(_phisicalPath);
             if (!dirInfo.Exists)
             {
                 dirInfo.Create();
@@ -41,17 +45,19 @@ namespace AutomatSellingDrink.BusinessLogic.Services
        }
         public async Task<File> UploadFileAsync(IFormFile uploadedFile)
         {
-            string path = _path + uploadedFile.FileName;
+            string path = _phisicalPath + uploadedFile.FileName;
+
             
             using (var fileStream = new FileStream(path, FileMode.Create))
             {
                 await uploadedFile.CopyToAsync(fileStream);
             }
-            
+
+
             var result = await _fileRepository.UploadFileAsync(new Core.Models.File()
             {
                 Name = uploadedFile.FileName,
-                Path = path
+                Path = _urlFrontandImages + uploadedFile.FileName
             });
             
             return result;

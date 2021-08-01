@@ -28,7 +28,7 @@ export class UserInterface extends Component {
                     <th>Название напитка</th>
                     <th>Цена</th>
                     <th>В наличии</th>
-                    <th>ImageId</th>
+                    <th>Фото</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -38,7 +38,7 @@ export class UserInterface extends Component {
                         <td>{drinks.name}</td>
                         <td>{drinks.cost}</td>
                         <td>{drinks.count}</td>
-                        <td>{drinks.fileId}</td>
+                        <td><img src={drinks.image.path} alt={drinks.name} style={{maxWidth: 100}}/></td>
                         <td><BuyDrink
                             name={drinks.name}
                             onDrinksChange={handleDrinksChange} />

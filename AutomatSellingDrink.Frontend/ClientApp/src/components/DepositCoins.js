@@ -56,7 +56,7 @@ export class DepositCoins extends Component {
                 }
             )
         };
-        const response = await fetch('https://localhost:5001/UserAutomat/depositcoins',requestOptions);
+        const response = await fetch('https://localhost:5001/UserAutomat/depositcoin',requestOptions);
         const data = await response.json();
 
         this.props.onBalanceChange(data);

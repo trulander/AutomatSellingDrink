@@ -11,7 +11,7 @@ namespace AutomatSellingDrink.DataAccess.Configurations
         {
             builder.HasKey(x => x.Id);
             //builder.OwnsOne(x => x.Image).HasOne<Entities.File>();
-            builder.HasOne(x => x.Image).WithOne();
+            builder.HasOne(x => x.Image).WithMany();
         }
     }
 }
