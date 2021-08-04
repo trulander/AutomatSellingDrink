@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import {DepositCoins} from "./DepositCoins";
-import {BuyDrink} from "./BuyDrink";
+import {DepositCoins} from "./user/DepositCoins";
+import {BuyDrink} from "./user/BuyDrink";
+import {GetChange} from "./user/GetChange";
 
 export class UserInterface extends Component {
     static displayName = UserInterface.name;
@@ -17,7 +18,8 @@ export class UserInterface extends Component {
     }
 
     componentDidMount() {
-        this.populateWeatherData();
+        this.LoadDataDrinks();
+        this.LoadDataBalance();
     }
 
     static renderUserInterface(getavailabledrinks, handleDrinksChange) {
@@ -60,17 +62,20 @@ export class UserInterface extends Component {
         this.setState({
             balance: balance
         });
-        this.populateWeatherData();
+        this.LoadDataDrinks();
     }
 
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : UserInterface.renderUserInterface(this.state.drinks, this.handleDrinksChange);
+
         const balance = this.state.balance;
         return (
             <div>
                 <h1 id="tabelLabel" >Автоман покупки напитков</h1>
+                <GetChange
+                    onBalanceChange={this.handleBalanceChange}/>
                 <DepositCoins
                     balance={balance}
                     onBalanceChange={this.handleBalanceChange} />
@@ -79,12 +84,18 @@ export class UserInterface extends Component {
         );
     }
 
-    async populateWeatherData() {
+    async LoadDataDrinks() {
         const response = await fetch('https://localhost:5001/UserAutomat/getalldrinks');
         const data = await response.json();
         this.setState({
             drinks: data,
             loading: false
         });
+    }
+
+    async LoadDataBalance() {
+        const response = await fetch('https://localhost:5001/UserAutomat/getbalance');
+        const data = await response.json();
+        this.handleDrinksChange(data);
     }
 }

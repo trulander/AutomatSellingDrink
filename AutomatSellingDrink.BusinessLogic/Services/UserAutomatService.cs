@@ -47,11 +47,21 @@ namespace AutomatSellingDrink.BusinessLogic.Services
 
         public async Task<Core.Models.Coin[]> GetChangeAsync()
         {
+            if (_userMemoryService.GetUserMoney() <= 0)
+            {
+                throw new NeedMoreMoneyException("Ваш баланс равен 0");
+            }
+            
             var coins = await _userAutomatRepository.GetAllCoinsAsync();
             List<Core.Models.Coin> result = new List<Coin>();
             
             int coveredPrice(int summToChange,ref Core.Models.Coin coin)
             {
+                Core.Models.Coin resultCoin = new Coin()
+                {
+                    Cost = coin.Cost,
+                    Count = 0
+                };
                 int counted = 0;
                 int Num = summToChange / coin.Cost;
                 if (coin.Count == 0)
@@ -61,21 +71,30 @@ namespace AutomatSellingDrink.BusinessLogic.Services
                         Num = coin.Count;
                 for (int i = 0; i < Num; i++)
                 {
-                    result.Add(coin);
+                    resultCoin.Count += 1;
                     coin.Count -= 1;
                 }
+
+                if (resultCoin.Count != 0)
+                {
+                    result.Add(resultCoin);
+                }
+                
                 return Num * coin.Cost;
             }
 
             var test = coins.Reverse().ToArray();
             for (int i = 0; i < coins.Length; i++)
             {
-                _userMemoryService.DecreaseMoney(
+                if (_userMemoryService.DecreaseMoney(
                     coveredPrice(
                         _userMemoryService.GetUserMoney(), 
                         ref coins[i]
-                        )
-                    );
+                    )
+                ) <= 0)
+                {
+                    break;
+                }
             }
             await _userAutomatRepository.GetChangeAsync(coins);
             return result.ToArray();
@@ -124,6 +143,15 @@ namespace AutomatSellingDrink.BusinessLogic.Services
             {
                 throw new DrinkNotFoundException("Ни одного напитка нет в наличии");
             }
+            return result;
+        }
+
+        public async Task<Balance> GetBalanceAsync()
+        {
+            var result = new Balance()
+            {
+                Summ = _userMemoryService.GetUserMoney()
+            };
             return result;
         }
     }

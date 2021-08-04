@@ -39,7 +39,7 @@ namespace AutomatSellingDrink.DataAccess.Repositories
 
         public async Task<Core.Models.Drink> UpdateDrinkAsync(Drink drink)
         {
-            var updatedDrink = await _applicationDbContext.Drinks.Where(x => x.Name == drink.Name).FirstOrDefaultAsync();
+            var updatedDrink = await _applicationDbContext.Drinks.Include(x=>x.Image).Where(x => x.Name == drink.Name).FirstOrDefaultAsync();
             updatedDrink.Name = drink.Name;
             updatedDrink.Cost = drink.Cost;
             updatedDrink.FileId = drink.FileId;

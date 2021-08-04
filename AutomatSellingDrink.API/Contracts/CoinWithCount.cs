@@ -1,6 +1,6 @@
 ﻿namespace AutomatSellingDrink.API.Contracts
 {
-    public class CoinAdmin
+    public class CoinWithCount
     {
         public int Cost { get; set; }
         public int Count { get; set; }

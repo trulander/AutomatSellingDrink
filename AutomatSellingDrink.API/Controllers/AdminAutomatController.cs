@@ -95,34 +95,34 @@ namespace AutomatSellingDrink.API.Controllers
             return Ok(result.ToArray());
         }
 
-        [ProducesResponseType(typeof(Contracts.CoinAdmin), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.CoinWithCount), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpPost("createcoin")]
-        public async Task<IActionResult> CreateCoinAsync(Contracts.CoinAdmin coin)
+        public async Task<IActionResult> CreateCoinAsync(Contracts.CoinWithCount coin)
         {
             Core.Models.Coin result = null;
             try
             {
-                result = await _adminAutomatService.CreateCoinAsync(_mapper.Map<Contracts.CoinAdmin, Core.Models.Coin>(coin));
+                result = await _adminAutomatService.CreateCoinAsync(_mapper.Map<Contracts.CoinWithCount, Core.Models.Coin>(coin));
             }
             catch (Exception e)
             {
                 return BadRequest(new Error(e.Message));
             }
-            return Ok(_mapper.Map<Core.Models.Coin, Contracts.CoinAdmin>(result));
+            return Ok(_mapper.Map<Core.Models.Coin, Contracts.CoinWithCount>(result));
         }
 
-        [ProducesResponseType(typeof(Contracts.CoinAdmin[]), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.CoinWithCount[]), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpGet("getallcoins")]
         public async Task<IActionResult> GetAllCoinsAsync()
         {
-            List<Contracts.CoinAdmin> result = new List<Contracts.CoinAdmin>();
+            List<Contracts.CoinWithCount> result = new List<Contracts.CoinWithCount>();
             try
             {
                 foreach (var coin in await _adminAutomatService.GetAllCoinsAsync())
                 {
-                    result.Add(_mapper.Map<Core.Models.Coin, Contracts.CoinAdmin>(coin));
+                    result.Add(_mapper.Map<Core.Models.Coin, Contracts.CoinWithCount>(coin));
                 }
             }
             catch (Exception e)
@@ -132,16 +132,16 @@ namespace AutomatSellingDrink.API.Controllers
             return Ok(result.ToArray());
         }
 
-        [ProducesResponseType(typeof(Contracts.CoinAdmin), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.CoinWithCount), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpPut("updatecoin")]
-        public async Task<IActionResult> UpdateCoinAsync(Contracts.CoinAdmin coin)
+        public async Task<IActionResult> UpdateCoinAsync(Contracts.CoinWithCount coin)
         {
-            Contracts.CoinAdmin result = null;
+            Contracts.CoinWithCount result = null;
             try
             {
-                var updatedCoin = await _adminAutomatService.UpdateCoinAsync(_mapper.Map<Contracts.CoinAdmin, Core.Models.Coin>(coin));
-                result = _mapper.Map<Core.Models.Coin, Contracts.CoinAdmin>(updatedCoin);
+                var updatedCoin = await _adminAutomatService.UpdateCoinAsync(_mapper.Map<Contracts.CoinWithCount, Core.Models.Coin>(coin));
+                result = _mapper.Map<Core.Models.Coin, Contracts.CoinWithCount>(updatedCoin);
             }
             catch (Exception e)
             {

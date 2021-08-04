@@ -39,8 +39,8 @@ namespace AutomatSellingDrink.API.Controllers
                     Cost = coin.Cost
                 };
                 result = _mapper.Map<Core.Models.Balance, Contracts.Balance>(
-                        await _userAutomatService.DepositCoinAsync(newCoin)
-                    );
+                    await _userAutomatService.DepositCoinAsync(newCoin)
+                );
             }
             catch (Exception e)
             {
@@ -48,19 +48,36 @@ namespace AutomatSellingDrink.API.Controllers
             }
             return Ok(result);
         }
+        
+        [ProducesResponseType(typeof(Contracts.Balance), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
+        [HttpGet("getbalance")]
+        public async Task<IActionResult> GetBalanceAsync()
+        {
+            Core.Models.Balance result = new Core.Models.Balance();
+            try
+            {
+               result = await _userAutomatService.GetBalanceAsync();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new Error(e.Message));
+            }
+            return Ok(_mapper.Map<Core.Models.Balance, Contracts.Balance>(result));
+        }        
 
-        [ProducesResponseType(typeof(Contracts.Coin[]), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Contracts.CoinWithCount[]), (int) HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Contracts.Error), (int) HttpStatusCode.BadRequest)]
         [HttpGet("getchange")]
         public async Task<IActionResult> GetChangeAsync()
         {
-            List<Contracts.Coin> result = new List<Contracts.Coin>();
+            List<Contracts.CoinWithCount> result = new List<Contracts.CoinWithCount>();
             try
             {
                 var coins = await _userAutomatService.GetChangeAsync();
                 foreach (var coin in coins) 
                 {
-                    result.Add(_mapper.Map<Core.Models.Coin, Contracts.Coin>(coin));
+                    result.Add(_mapper.Map<Core.Models.Coin, Contracts.CoinWithCount>(coin));
                 }
             }
             catch (Exception e)
